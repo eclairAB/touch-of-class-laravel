@@ -11,9 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('role_accesses', function (Blueprint $table) {
+        Schema::create('bundles', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->mediumText('name');
+            $table->unsignedBigInteger('service_id')->nullable();
+            $table->bigInteger('commission_percentage')->nullable()->default(1);
+            $table->decimal('price', 5, 2)->nullable();
+
+            $table->foreign('service_id')->references('id')->on('services');
         });
     }
 
@@ -22,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('role_accesses');
+        Schema::dropIfExists('bundles');
     }
 };

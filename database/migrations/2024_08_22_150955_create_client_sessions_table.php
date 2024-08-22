@@ -11,9 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sessions', function (Blueprint $table) {
+        Schema::create('client_sessions', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->mediumText('name');
+            $table->unsignedBigInteger('client_id')->nullable();
+            $table->boolean('completed')->nullable()->default(false);
+
+            $table->foreign('client_id')->references('id')->on('clients');
         });
     }
 
@@ -22,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sessions');
+        Schema::dropIfExists('client_sessions');
     }
 };

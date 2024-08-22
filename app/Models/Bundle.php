@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Bundle extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'name',
+        'service_id',
+        'commission_percentage',
+        'price',
+    ];
 }

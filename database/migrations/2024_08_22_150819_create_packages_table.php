@@ -14,6 +14,10 @@ return new class extends Migration
         Schema::create('packages', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->mediumText('name');
+            $table->bigInteger('sessions')->nullable()->default(1);
+            $table->bigInteger('commission_percentage')->nullable()->default(1);
+            $table->decimal('price', 5, 2)->nullable();
         });
     }
 

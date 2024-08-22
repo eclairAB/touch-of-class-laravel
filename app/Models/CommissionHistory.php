@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class CommissionHistory extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'session_id',
+        'service_id',
+        'stylist_id',
+    ];
 }
