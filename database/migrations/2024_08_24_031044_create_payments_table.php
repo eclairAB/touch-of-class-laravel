@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('services', function (Blueprint $table) {
+        Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->mediumText('name');
-            $table->bigInteger('commission_percentage')->nullable()->default(1);
-            $table->decimal('price', 8, 2)->nullable();
+            $table->unsignedBigInteger('appointment_id')->nullable();
+            $table->decimal('amount_paid', 8, 2)->nullable();
+
+            $table->foreign('appointment_id')->references('id')->on('appointments');
         });
     }
 
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('services');
+        Schema::dropIfExists('payments');
     }
 };

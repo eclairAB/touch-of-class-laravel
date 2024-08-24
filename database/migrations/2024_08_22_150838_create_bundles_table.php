@@ -16,7 +16,6 @@ return new class extends Migration
             $table->timestamps();
             $table->mediumText('name');
             $table->unsignedBigInteger('service_id')->nullable();
-            $table->bigInteger('commission_percentage')->nullable()->default(1);
             $table->decimal('price', 5, 2)->nullable();
 
             $table->foreign('service_id')->references('id')->on('services');
