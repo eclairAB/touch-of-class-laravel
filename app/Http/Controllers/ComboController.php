@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Bundle;
 use Illuminate\Http\Request;
 
-class BundleController extends Controller
+class ComboController extends Controller
 {
     /**
      * Display a listing of the resource.
