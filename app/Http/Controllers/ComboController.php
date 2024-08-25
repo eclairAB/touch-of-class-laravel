@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\Bundle;
+use App\Models\Combo;
 use Illuminate\Http\Request;
 
 class ComboController extends Controller
@@ -11,8 +11,8 @@ class ComboController extends Controller
      */
     public function index()
     {
-        $bundles = Bundle::with('service')->get();
-        return response()->json($bundles);
+        $combos = Combo::with('service')->get();
+        return response()->json($combos);
     }
 
     /**
@@ -20,8 +20,8 @@ class ComboController extends Controller
      */
     public function store(Request $request)
     {
-        $bundle = Bundle::create($request->toArray());
-        return response()->json($bundle, 201);
+        $combo = Combo::create($request->toArray());
+        return response()->json($combo, 201);
     }
 
     /**
@@ -29,8 +29,8 @@ class ComboController extends Controller
      */
     public function show(string $id)
     {
-        $bundle = Bundle::with('service')->find($id);
-        return response()->json($bundle);
+        $combo = Combo::with('service')->find($id);
+        return response()->json($combo);
     }
 
     /**
@@ -38,9 +38,9 @@ class ComboController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $bundle = Bundle::findOrFail($id);
-        $bundle->update($request->toArray());
-        return response()->json(['message' => 'Bundle updated successfully', 'bundle' => $bundle], 200);
+        $combo = Combo::findOrFail($id);
+        $combo->update($request->toArray());
+        return response()->json(['message' => 'Combo updated successfully', 'combo' => $combo], 200);
     }
 
     /**
@@ -48,7 +48,7 @@ class ComboController extends Controller
      */
     public function destroy(string $id)
     {
-        Bundle::where('id', $id)->delete();
-        return response()->json(['message' => 'Bundle deleted successfully'], 200);
+        Combo::where('id', $id)->delete();
+        return response()->json(['message' => 'Combo deleted successfully'], 200);
     }
 }
