@@ -14,6 +14,6 @@ Route::get('/user', function (Request $request) {
 
 Route::apiResource('packages', PackageController::class);
 Route::apiResource('clients', ClientController::class);
-Route::apiResource('bundles', ComboController::class);
+Route::apiResource('combos', ComboController::class);
 Route::apiResource('services', ServiceController::class);
 Route::apiResource('appointments', AppointmentController::class);
