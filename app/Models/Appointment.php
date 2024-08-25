@@ -11,7 +11,7 @@ class Appointment extends Model
     protected $fillable = [
         'client_id',
         'package_id',
-        'bundle_id',
+        'combo_id',
         'service_id',
         'amount_payable',
         'fully_paid',
@@ -23,8 +23,8 @@ class Appointment extends Model
     function package() {
         return $this->belongsTo(Package::class);
     }
-    function bundle() {
-        return $this->belongsTo(Bundle::class);
+    function combo() {
+        return $this->belongsTo(Combo::class);
     }
     function service() {
         return $this->belongsTo(Service::class);
