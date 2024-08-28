@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('client_sessions', function (Blueprint $table) {
+        Schema::create('combo_services', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->mediumText('name');
-            $table->unsignedBigInteger('client_id')->nullable();
-            $table->boolean('completed')->nullable()->default(false);
+            $table->unsignedBigInteger('combo_id')->nullable();
+            $table->unsignedBigInteger('service_id')->nullable();
 
-            $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
+            $table->foreign('combo_id')->references('id')->on('combos')->onDelete('cascade');
+            $table->foreign('service_id')->references('id')->on('services');
         });
     }
 
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('client_sessions');
+        Schema::dropIfExists('combo_services');
     }
 };

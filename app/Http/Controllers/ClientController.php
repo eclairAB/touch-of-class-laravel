@@ -11,7 +11,7 @@ class ClientController extends Controller
      */
     public function index()
     {
-        $clients = Client::get();
+        $clients = Client::with('appointments.package', 'appointments.combo', 'appointments.service', 'appointments.payments')->get();
         return response()->json($clients);
     }
 

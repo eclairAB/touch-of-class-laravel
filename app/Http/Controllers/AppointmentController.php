@@ -11,7 +11,7 @@ class AppointmentController extends Controller
      */
     public function index()
     {
-        $appointments = Appointment::with('client', 'package', 'bundle', 'service', 'payments', )->get();
+        $appointments = Appointment::with('client', 'package', 'combo', 'service', 'payments', )->get();
         return response()->json($appointments);
     }
 

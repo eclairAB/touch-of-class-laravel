@@ -15,10 +15,8 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->mediumText('name');
-            $table->unsignedBigInteger('service_id')->nullable();
             $table->decimal('price', 5, 2)->nullable();
 
-            $table->foreign('service_id')->references('id')->on('services');
         });
     }
 
