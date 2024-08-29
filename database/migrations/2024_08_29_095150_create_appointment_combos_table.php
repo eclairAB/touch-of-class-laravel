@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('appointments', function (Blueprint $table) {
+        Schema::create('appointment_combos', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedBigInteger('client_id')->nullable();
-            $table->decimal('amount_payable', 8, 2)->nullable();
-            $table->boolean('fully_paid')->nullable()->default(false);
+            $table->unsignedBigInteger('appointment_id')->nullable();
+            $table->unsignedBigInteger('combo_id')->nullable();
 
-            $table->foreign('client_id')->references('id')->on('clients');
+            $table->foreign('appointment_id')->references('id')->on('appointments');
+            $table->foreign('combo_id')->references('id')->on('combos');
         });
     }
 
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('appointments');
+        Schema::dropIfExists('appointment_combos');
     }
 };

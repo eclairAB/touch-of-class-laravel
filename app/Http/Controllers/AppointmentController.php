@@ -11,7 +11,7 @@ class AppointmentController extends Controller
      */
     public function index()
     {
-        $appointments = Appointment::with('client', 'package', 'combo', 'service', 'payments', )->get();
+        $appointments = Appointment::with('client', 'packages.package', 'combos.combo', 'services.service', 'payments', )->get();
         return response()->json($appointments);
     }
 
@@ -28,7 +28,12 @@ class AppointmentController extends Controller
             $payload['fully_paid'] = true;
         }
 
-        $appointment = Appointment::create($payload)->payments()->create($payment);
+        $appointment = Appointment::create($payload);
+        $appointment->packages()->createMany($payload['packages']);
+        $appointment->combos()->createMany($payload['combos']);
+        $appointment->services()->createMany($payload['services']);
+        $appointment->payments()->create($payment);
+
         return response()->json($appointment, 201);
     }
 

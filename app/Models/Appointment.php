@@ -10,9 +10,6 @@ class Appointment extends Model
     use HasFactory;
     protected $fillable = [
         'client_id',
-        'package_id',
-        'combo_id',
-        'service_id',
         'amount_payable',
         'fully_paid',
     ];
@@ -20,14 +17,14 @@ class Appointment extends Model
     function client() {
         return $this->belongsTo(Client::class);
     }
-    function package() {
-        return $this->belongsTo(Package::class);
+    function packages() {
+        return $this->hasMany(AppointmentPackage::class);
     }
-    function combo() {
-        return $this->belongsTo(Combo::class);
+    function combos() {
+        return $this->hasMany(AppointmentCombo::class);
     }
-    function service() {
-        return $this->belongsTo(Service::class);
+    function services() {
+        return $this->hasMany(AppointmentService::class);
     }
     function payments() {
         return $this->hasMany(Payment::class);

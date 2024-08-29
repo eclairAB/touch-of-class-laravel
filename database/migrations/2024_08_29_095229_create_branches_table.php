@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('appointments', function (Blueprint $table) {
+        Schema::create('branches', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedBigInteger('client_id')->nullable();
-            $table->decimal('amount_payable', 8, 2)->nullable();
-            $table->boolean('fully_paid')->nullable()->default(false);
-
-            $table->foreign('client_id')->references('id')->on('clients');
+            $table->mediumText('name');
         });
     }
 
@@ -27,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('appointments');
+        Schema::dropIfExists('branches');
     }
 };
