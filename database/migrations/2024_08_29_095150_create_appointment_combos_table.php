@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('appointment_id')->nullable();
             $table->unsignedBigInteger('combo_id')->nullable();
 
-            $table->foreign('appointment_id')->references('id')->on('appointments');
+            $table->foreign('appointment_id')->references('id')->on('appointments')->onDelete('cascade');
             $table->foreign('combo_id')->references('id')->on('combos');
         });
     }

@@ -16,11 +16,16 @@ return new class extends Migration
             $table->timestamps();
             $table->unsignedBigInteger('session_id')->nullable();
             $table->unsignedBigInteger('service_id')->nullable();
-            $table->unsignedBigInteger('stylist_id')->nullable();
+            $table->unsignedBigInteger('package_redeem_id')->nullable();
+            $table->unsignedBigInteger('combo_redeem_id')->nullable();
+            $table->unsignedBigInteger('service_redeem_id')->nullable();
+            $table->decimal('commission_amount', 8, 2)->nullable();
 
             $table->foreign('session_id')->references('id')->on('client_sessions');
             $table->foreign('service_id')->references('id')->on('clients');
-            // $table->foreign('stylist_id')->references('id')->on('clients');
+            $table->foreign('package_redeem_id')->references('id')->on('appointment_package_redeems');
+            $table->foreign('combo_redeem_id')->references('id')->on('appointment_combo_redeems');
+            $table->foreign('service_redeem_id')->references('id')->on('appointment_service_redeems');
         });
     }
 

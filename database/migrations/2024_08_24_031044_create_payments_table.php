@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('appointment_id')->nullable();
             $table->decimal('amount_paid', 8, 2)->nullable();
 
-            $table->foreign('appointment_id')->references('id')->on('appointments');
+            $table->foreign('appointment_id')->references('id')->on('appointments')->onDelete('cascade');
         });
     }
 

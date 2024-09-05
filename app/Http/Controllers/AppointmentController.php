@@ -29,9 +29,9 @@ class AppointmentController extends Controller
         }
 
         $appointment = Appointment::create($payload);
-        $appointment->packages()->createMany($payload['packages']);
-        $appointment->combos()->createMany($payload['combos']);
-        $appointment->services()->createMany($payload['services']);
+        if(isset($payload['packages'])) { $appointment->packages()->createMany($payload['packages']); }
+        if(isset($payload['combos'])) { $appointment->combos()->createMany($payload['combos']); }
+        if(isset($payload['services'])) { $appointment->services()->createMany($payload['services']); }
         $appointment->payments()->create($payment);
 
         return response()->json($appointment, 201);
