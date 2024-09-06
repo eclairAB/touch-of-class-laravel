@@ -13,7 +13,7 @@ class Combo extends Model
         'price',
     ];
 
-    // function service() {
-    //     return $this->belongsTo(Service::class);
-    // }
+    function combo_services() {
+        return $this->hasMany(ComboService::class);
+    }
 }

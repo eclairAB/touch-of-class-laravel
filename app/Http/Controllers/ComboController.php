@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Combo;
+use App\Models\ComboService;
 use Illuminate\Http\Request;
 
 class ComboController extends Controller
@@ -11,7 +12,7 @@ class ComboController extends Controller
      */
     public function index()
     {
-        $combos = Combo::with('service')->get();
+        $combos = Combo::with('combo_services.service')->get();
         return response()->json($combos);
     }
 
@@ -20,7 +21,14 @@ class ComboController extends Controller
      */
     public function store(Request $request)
     {
-        $combo = Combo::create($request->toArray());
+        $services = [];
+        foreach ($request->services as $item) {
+            $services[] = [
+                'service_id' => $item,
+            ];
+        }
+
+        $combo = Combo::create($request->toArray())->combo_services()->createMany($services);
         return response()->json($combo, 201);
     }
 
@@ -29,7 +37,7 @@ class ComboController extends Controller
      */
     public function show(string $id)
     {
-        $combo = Combo::with('service')->find($id);
+        $combo = Combo::with('combo_services.service')->find($id);
         return response()->json($combo);
     }
 
@@ -38,8 +46,21 @@ class ComboController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $services = [];
+        foreach ($request->services as $item) {
+            $services[] = [
+                'combo_id' => $id,
+                'service_id' => $item,
+            ];
+        }
+
         $combo = Combo::findOrFail($id);
         $combo->update($request->toArray());
+
+        $combo_service = ComboService::where('combo_id', $id);
+        $combo_service->delete();
+        $combo_service->insert($services);
+
         return response()->json(['message' => 'Combo updated successfully', 'combo' => $combo], 200);
     }
 

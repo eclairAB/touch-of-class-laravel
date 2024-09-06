@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class ComboService extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'combo_id',
+        'service_id',
+    ];
+
+    function service() {
+        return $this->belongsTo(Service::class);
+    }
 }
