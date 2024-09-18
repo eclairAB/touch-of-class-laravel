@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('appointment_service_redeems', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();$table->unsignedBigInteger('appointment_id')->nullable();
+            $table->timestamps();
+            $table->unsignedBigInteger('appointment_id')->nullable();
             $table->unsignedBigInteger('service_id')->nullable();
             $table->unsignedBigInteger('branch_id')->nullable();
             $table->unsignedBigInteger('stylist_id')->nullable();

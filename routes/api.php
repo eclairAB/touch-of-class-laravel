@@ -7,6 +7,8 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ComboController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\BranchController;
+use App\Http\Controllers\PaymentController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -17,3 +19,5 @@ Route::apiResource('clients', ClientController::class);
 Route::apiResource('combos', ComboController::class);
 Route::apiResource('services', ServiceController::class);
 Route::apiResource('appointments', AppointmentController::class);
+Route::apiResource('branches', BranchController::class);
+Route::apiResource('payments', PaymentController::class);

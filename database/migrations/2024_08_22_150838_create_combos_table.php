@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->mediumText('name');
-            $table->decimal('price', 5, 2)->nullable();
+            $table->decimal('price', 8, 2)->nullable();
 
         });
     }

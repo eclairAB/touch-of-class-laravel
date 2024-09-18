@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->unsignedBigInteger('appointment_id')->nullable();
+            $table->unsignedBigInteger('branch_id')->nullable();
             $table->decimal('amount_paid', 8, 2)->nullable();
 
             $table->foreign('appointment_id')->references('id')->on('appointments')->onDelete('cascade');
+            $table->foreign('branch_id')->references('id')->on('branches');
         });
     }
 
