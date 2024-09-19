@@ -12,6 +12,7 @@ class AppointmentComboRedeem extends Model
         'appointment_id',
         'combo_id',
         'branch_id',
+        'cashier_id',
         'stylist_id',
         'session_no',
         'paid',

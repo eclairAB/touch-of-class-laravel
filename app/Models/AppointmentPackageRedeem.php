@@ -12,6 +12,7 @@ class AppointmentPackageRedeem extends Model
         'appointment_id',
         'package_id',
         'branch_id',
+        'cashier_id',
         'stylist_id',
         'session_no',
         'paid',
