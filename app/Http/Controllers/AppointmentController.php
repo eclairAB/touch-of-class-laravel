@@ -14,7 +14,7 @@ class AppointmentController extends Controller
             // 'services.service',
             'payments',
             'package_redeems.package',
-            'combo_redeems.combo',
+            'combo_redeems.combo.combo_services.service',
             'service_redeems.service',
         ];
     }
@@ -64,7 +64,7 @@ class AppointmentController extends Controller
      */
     public function show(string $id)
     {
-        $appointment = Appointment::with($this->appointment_eloquent())->find($id);
+        $appointment = Appointment::with($this->appointment_eloquent())->where('client_id', $id)->get();
         return response()->json($appointment);
     }
 
@@ -124,7 +124,7 @@ class AppointmentController extends Controller
             # expects \Appointment, $payload->sessions
 
             foreach($payload as $key => $item) {
-                for ($i=0; $i < $item['sessions']; $i++) {
+                // for ($i=0; $i < $item['services']; $i++) {
                     $service_redeems[$key][] = [
                         'service_id'        => $item['id'],
                         'branch_id'         => null,
@@ -132,7 +132,7 @@ class AppointmentController extends Controller
                         // 'session_no'        => 1 + $i,
                         'paid'              => false,
                     ];
-                }
+                // }
                 $appointment->service_redeems()->createMany($service_redeems[$key]);
             }
         }

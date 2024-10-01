@@ -11,7 +11,11 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        $payments = Payment::get();
+        $payments = Payment::with(
+            'appointment.package_redeems',
+            'appointment.combo_redeems',
+            'appointment.service_redeems',
+            )->get();
         return response()->json($payments);
     }
 

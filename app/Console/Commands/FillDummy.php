@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Role;
 use App\Models\Service;
 use App\Models\Combo;
 use App\Models\Package;
@@ -36,6 +37,7 @@ class FillDummy extends Command
     {
         $this->clear_all();
 
+        $this->create_roles();
         $this->create_user();
         $this->create_branch();
         $this->create_service();
@@ -45,6 +47,7 @@ class FillDummy extends Command
     }
 
     function clear_all() {
+        Branch::truncate();
         User::truncate();
         Service::truncate();
         Combo::truncate();
@@ -54,11 +57,33 @@ class FillDummy extends Command
         Payment::truncate();
     }
 
+    function create_roles() {
+        $items = [
+            [
+                'name' => 'admin',
+            ],
+            [
+                'name' => 'cashier',
+            ],
+            [
+                'name' => 'stylist',
+            ],
+            [
+                'name' => 'other_staff',
+            ],
+        ];
+        Role::insert($items);
+    }
+
     function create_user() {
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        User::create([
+            'first_name' => 'Admin',
+            'last_name' => 'Admin',
+            'contact_number' => '09999999999',
+            'role_id' => 1,
+            'email' => 'admin@example.com',
             'password' => Hash::make('secret'),
+            'active_employee' => true,
         ]);
     }
     function create_branch() {
@@ -71,16 +96,22 @@ class FillDummy extends Command
                 'name'                  => 'Red Service',
                 'commission_percentage' => 7,
                 'price'                 => 599,
+                'created_at'             => now(),
+                'updated_at'             => now(),
             ],
             [
                 'name'                  => 'Blue Service',
                 'commission_percentage' => 8,
                 'price'                 => 2499,
+                'created_at'             => now(),
+                'updated_at'             => now(),
             ],
             [
                 'name'                  => 'Gold Service',
                 'commission_percentage' => 9,
                 'price'                 => 3000,
+                'created_at'             => now(),
+                'updated_at'             => now(),
             ],
         ];
         Service::insert($items);
@@ -88,8 +119,10 @@ class FillDummy extends Command
     function create_combo() {
         $items = [
             [
-                'name'     => 'Chocolate Combo',
-                'price'    => 2999,
+                'name'          => 'Chocolate Combo',
+                'price'         => 2999,
+                'created_at'    => now(),
+                'updated_at'    => now(),
                 'services' => [
                     [
                         'service_id' => 1
@@ -100,8 +133,10 @@ class FillDummy extends Command
                 ],
             ],
             [
-                'name'     => 'Bouquet Combo',
-                'price'    => 5699,
+                'name'          => 'Bouquet Combo',
+                'price'         => 5699,
+                'created_at'    => now(),
+                'updated_at'    => now(),
                 'services' => [
                     [
                         'service_id' => 1
@@ -126,18 +161,24 @@ class FillDummy extends Command
                 'sessions'              => 5,
                 'commission_percentage' => 8,
                 'price'                 => 9999,
+                'created_at'            => now(),
+                'updated_at'            => now(),
             ],
             [
                 'name'                  => 'Emerald Package',
                 'sessions'              => 3,
                 'commission_percentage' => 8,
                 'price'                 => 5999,
+                'created_at'            => now(),
+                'updated_at'            => now(),
             ],
             [
                 'name'                  => 'Sapphire Package',
                 'sessions'              => 8,
                 'commission_percentage' => 9,
                 'price'                 => 14599,
+                'created_at'            => now(),
+                'updated_at'            => now(),
             ],
         ];
         Package::insert($items);
@@ -149,24 +190,32 @@ class FillDummy extends Command
                 'last_name'      => 'Olivera',
                 'email'          => 'tokyo@gmail.com',
                 'contact_number' => '091234567812',
+                'created_at'     => now(),
+                'updated_at'     => now(),
             ],
             [
                 'first_name'     => 'Berlin',
                 'last_name'      => 'Fonollosa',
                 'email'          => 'berlin@gmail.com',
                 'contact_number' => '091234567812',
+                'created_at'     => now(),
+                'updated_at'     => now(),
             ],
             [
                 'first_name'     => 'Helsinki',
                 'last_name'      => 'Dragić',
                 'email'          => 'helsinki@gmail.com',
                 'contact_number' => '091234567812',
+                'created_at'     => now(),
+                'updated_at'     => now(),
             ],
             [
                 'first_name'     => 'Manila',
                 'last_name'      => 'Martinez',
                 'email'          => 'manila@gmail.com',
                 'contact_number' => '091234567812',
+                'created_at'     => now(),
+                'updated_at'     => now(),
             ],
         ];
         Client::insert($items);
