@@ -85,6 +85,24 @@ class FillDummy extends Command
             'password' => Hash::make('secret'),
             'active_employee' => true,
         ]);
+        User::create([
+            'first_name' => 'Cashier',
+            'last_name' => 'Cashier',
+            'contact_number' => '09999999999',
+            'role_id' => 2,
+            'email' => 'cashier@example.com',
+            'password' => Hash::make('secret'),
+            'active_employee' => true,
+        ]);
+        User::create([
+            'first_name' => 'Stylist',
+            'last_name' => 'Stylist',
+            'contact_number' => '09999999999',
+            'role_id' => 3,
+            'email' => 'stylist@example.com',
+            'password' => Hash::make('secret'),
+            'active_employee' => true,
+        ]);
     }
     function create_branch() {
         $branch = ['name' => 'Bajada'];

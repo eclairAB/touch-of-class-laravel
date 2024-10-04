@@ -2,8 +2,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -65,6 +67,11 @@ class UserController extends Controller
         return response()->json(['message' => 'User deleted successfully'], 200);
     }
 
+
+
+
+
+
     function search_staff(Request $request) {
         $searchTerms = explode(' ', $request->search);
 
@@ -76,5 +83,24 @@ class UserController extends Controller
             })->with('role')->get();
 
         return response()->json($users);
+    }
+
+    function login(Request $request) {
+        if(Auth::attempt($request->toArray())) {
+
+            $user = Auth::user();
+            $user['token'] = $user->createToken('api-token')->plainTextToken;
+            $user['role'] = Role::find($user->id);
+
+            return response()->json($user);
+        }
+        else {
+            return response()->json('Incorrect Credentials', 401);
+        }
+    }
+
+    function logout() {
+        Auth::user()->currentAccessToken()->delete();
+        return response()->json('Logout successful');
     }
 }
