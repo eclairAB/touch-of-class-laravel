@@ -14,15 +14,13 @@ return new class extends Migration
         Schema::create('appointment_service_redeems', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedBigInteger('appointment_id')->nullable();
-            $table->unsignedBigInteger('service_id')->nullable();
+            $table->unsignedBigInteger('appointment_service_id')->nullable();
             $table->unsignedBigInteger('branch_id')->nullable();
             $table->unsignedBigInteger('cashier_id')->nullable();
             $table->unsignedBigInteger('stylist_id')->nullable();
             $table->boolean('paid')->nullable()->default(false);
 
-            $table->foreign('appointment_id')->references('id')->on('appointments')->onDelete('cascade');
-            $table->foreign('service_id')->references('id')->on('services');
+            $table->foreign('appointment_service_id')->references('id')->on('appointment_services')->onDelete('cascade');
             $table->foreign('branch_id')->references('id')->on('branches');
             $table->foreign('cashier_id')->references('id')->on('users');
             $table->foreign('stylist_id')->references('id')->on('users');

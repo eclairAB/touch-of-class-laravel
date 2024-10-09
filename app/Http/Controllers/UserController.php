@@ -80,7 +80,13 @@ class UserController extends Controller
                     $query->orWhere('first_name', 'ILIKE', "%{$term}%")
                         ->orWhere('last_name', 'ILIKE', "%{$term}%");
                 }
-            })->with('role')->get();
+            })->where('active_employee', true);
+        if(isset($request->role)) {
+            $users->whereHas('role', function($query) use($request) {
+                $query->where('name', $request->role);
+            });
+        }
+        $users = $users->with('role')->get();
 
         return response()->json($users);
     }
