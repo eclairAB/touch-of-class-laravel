@@ -13,9 +13,12 @@ class AppointmentController extends Controller
         return [
             'client',
             // 'payments',
-            'packages.package_redeems.package',
-            'combos.combo_redeems.combo.combo_services.service',
-            'services.service_redeems.service',
+            'appointment_packages.package_redeems',
+            'appointment_packages.package',
+            'appointment_combos.combo_redeems',
+            'appointment_combos.combo.combo_services.service',
+            'appointment_services.service_redeems',
+            'appointment_services.service',
         ];
     }
     /**
@@ -43,16 +46,25 @@ class AppointmentController extends Controller
 
         $appointment = Appointment::create($payload);
         if(isset($payload['packages'])) {
-            $appointment_packages = $appointment->packages()->createMany($payload['packages']);
-            $this->map_package_redeems($appointment_packages[0]['id'], $payload['packages'], $payload['branch_id']);
+            foreach ($payload['packages'] as $key => $value) {
+                $payload['packages'][$key]['package_id'] = $value['id'];
+            }
+            $appointment_packages = $appointment->appointment_packages()->createMany($payload['packages']);
+            $this->map_package_redeems($appointment_packages, $payload);
         }
         if(isset($payload['combos'])) {
-            $appointment_combos = $appointment->combos()->createMany($payload['combos']);
-            $this->map_combo_redeems($appointment_combos[0]['id'], $payload['combos'], $payload['branch_id']);
+            foreach ($payload['combos'] as $key => $value) {
+                $payload['combos'][$key]['combo_id'] = $value['id'];
+            }
+            $appointment_combos = $appointment->appointment_combos()->createMany($payload['combos']);
+            $this->map_combo_redeems($appointment_combos, $payload);
         }
         if(isset($payload['services'])) {
-            $appointment_services = $appointment->services()->createMany($payload['services']);
-            $this->map_service_redeems($appointment_services[0]['id'], $payload['services'], $payload['branch_id']);
+            foreach ($payload['services'] as $key => $value) {
+                $payload['services'][$key]['service_id'] = $value['id'];
+            }
+            $appointment_services = $appointment->appointment_services()->createMany($payload['services']);
+            $this->map_service_redeems($appointment_services, $payload);
         }
         // $appointment->payments()->create($payment);
 
@@ -88,14 +100,14 @@ class AppointmentController extends Controller
     }
 
 
-        function map_package_redeems($appointment_package_id, $payload, $branch_id) {
+        function map_package_redeems($appointment_package, $payload) {
             # expects \Appointment, $payload->sessions
 
-            foreach($payload as $key => $item) {
+            foreach($payload['packages'] as $key => $item) {
                 for ($i=0; $i < $item['sessions']; $i++) {
                     $package_redeem[$key][] = [
-                        'appointment_package_id'    => $appointment_package_id,
-                        'branch_id'                 => $branch_id,
+                        'appointment_package_id'    => $appointment_package[$key]['id'],
+                        'branch_id'                 => $payload['branch_id'],
                         'stylist_id'                => null,
                         'session_no'                => 1 + $i,
                         'paid'                      => false,
@@ -104,14 +116,14 @@ class AppointmentController extends Controller
                 AppointmentPackageRedeem::insert($package_redeem[$key]);
             }
         }
-        function map_combo_redeems($appointment_combo_id, $payload, $branch_id) {
+        function map_combo_redeems($appointment_combo, $payload) {
             # expects \Appointment, $payload->sessions
 
-            foreach($payload as $key => $item) {
+            foreach($payload['combos'] as $key => $item) {
                 for ($i=0; $i < count($item['combo_services']); $i++) {
                     $combo_redeem[$key][] = [
-                        'appointment_combo_id'  => $appointment_combo_id,
-                        'branch_id'             => $branch_id,
+                        'appointment_combo_id'  => $appointment_combo[$key]['id'],
+                        'branch_id'             => $payload['branch_id'],
                         'stylist_id'            => null,
                         'service_no'            => 1 + $i,
                         'paid'                  => false,
@@ -120,14 +132,14 @@ class AppointmentController extends Controller
                 AppointmentComboRedeem::insert($combo_redeem[$key]);
             }
         }
-        function map_service_redeems($appointment_service_id, $payload, $branch_id) {
+        function map_service_redeems($appointment_service, $payload) {
             # expects \Appointment, $payload->sessions
 
-            foreach($payload as $key => $item) {
+            foreach($payload['services'] as $key => $item) {
                 // for ($i=0; $i < $item['services']; $i++) {
                     $service_redeems[$key][] = [
-                        'appointment_service_id'    => $appointment_service_id,
-                        'branch_id'                 => $branch_id,
+                        'appointment_service_id'    => $appointment_service[$key]['id'],
+                        'branch_id'                 => $payload['branch_id'],
                         'stylist_id'                => null,
                         // 'session_no'                => 1 + $i,
                         'paid'                      => false,

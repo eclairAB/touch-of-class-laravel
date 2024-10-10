@@ -16,8 +16,4 @@ class AppointmentPackageRedeem extends Model
         'session_no',
         'paid',
     ];
-
-    function package() {
-        return $this->belongsTo(Package::class);
-    }
 }

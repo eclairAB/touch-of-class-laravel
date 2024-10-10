@@ -17,13 +17,13 @@ class Appointment extends Model
     function client() {
         return $this->belongsTo(Client::class);
     }
-    function packages() {
+    function appointment_packages() {
         return $this->hasMany(AppointmentPackage::class);
     }
-    function combos() {
+    function appointment_combos() {
         return $this->hasMany(AppointmentCombo::class);
     }
-    function services() {
+    function appointment_services() {
         return $this->hasMany(AppointmentService::class);
     }
 }

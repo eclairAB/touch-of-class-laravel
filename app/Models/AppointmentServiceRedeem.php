@@ -16,8 +16,4 @@ class AppointmentServiceRedeem extends Model
         'session_no',
         'paid',
     ];
-
-    function service() {
-        return $this->belongsTo(Service::class);
-    }
 }

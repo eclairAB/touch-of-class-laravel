@@ -16,8 +16,4 @@ class AppointmentComboRedeem extends Model
         'session_no',
         'paid',
     ];
-
-    function combo() {
-        return $this->belongsTo(Combo::class);
-    }
 }
