@@ -20,4 +20,10 @@ class AppointmentCombo extends Model
     function combo() {
         return $this->belongsTo(Combo::class);
     }
+    function payments() {
+        return $this->hasMany(Payment::class);
+    }
+    function combo_redeems() {
+        return $this->hasMany(AppointmentComboRedeem::class);
+    }
 }

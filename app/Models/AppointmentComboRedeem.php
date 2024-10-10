@@ -9,7 +9,7 @@ class AppointmentComboRedeem extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'appointment_id',
+        'appointment_combo_id',
         'combo_id',
         'branch_id',
         'cashier_id',

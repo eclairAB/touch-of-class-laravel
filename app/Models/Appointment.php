@@ -26,17 +26,4 @@ class Appointment extends Model
     function services() {
         return $this->hasMany(AppointmentService::class);
     }
-    function payments() {
-        return $this->hasMany(Payment::class);
-    }
-
-    function package_redeems() {
-        return $this->hasMany(AppointmentPackageRedeem::class);
-    }
-    function combo_redeems() {
-        return $this->hasMany(AppointmentComboRedeem::class);
-    }
-    function service_redeems() {
-        return $this->hasMany(AppointmentServiceRedeem::class);
-    }
 }

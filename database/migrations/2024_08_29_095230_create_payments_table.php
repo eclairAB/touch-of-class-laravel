@@ -19,6 +19,9 @@ return new class extends Migration
             $table->unsignedBigInteger('appointment_service_id')->nullable();
             $table->unsignedBigInteger('branch_id')->nullable();
             $table->decimal('amount_paid', 8, 2)->nullable();
+            $table->string('payment_milestone')->nullable(); // stores "downpayment", "follow-up", "final payment"
+            $table->string('payment_method')->nullable();
+
 
             $table->foreign('appointment_package_id')->references('id')->on('appointment_packages')->onDelete('cascade');
             $table->foreign('appointment_combo_id')->references('id')->on('appointment_combos')->onDelete('cascade');

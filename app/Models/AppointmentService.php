@@ -20,4 +20,10 @@ class AppointmentService extends Model
     function service() {
         return $this->belongsTo(Service::class);
     }
+    function payments() {
+        return $this->hasMany(Payment::class);
+    }
+    function service_redeems() {
+        return $this->hasMany(AppointmentServiceRedeem::class);
+    }
 }

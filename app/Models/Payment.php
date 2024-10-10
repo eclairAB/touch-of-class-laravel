@@ -9,13 +9,15 @@ class Payment extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'appointment_id',
+        'appointment_package_id',
+        'appointment_combo_id',
+        'appointment_service_id',
         'amount_paid',
         'branch_id',
+        'payment_milestone',
+        'payment_method',
     ];
-    function appointment() {
-        return $this->belongsTo(Appointment::class);
-    }
+
     function branch() {
         return $this->belongsTo(Branch::class);
     }

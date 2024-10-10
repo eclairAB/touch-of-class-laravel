@@ -15,4 +15,10 @@ class AppointmentPackage extends Model
     function package() {
         return $this->belongsTo(Package::class);
     }
+    function payments() {
+        return $this->hasMany(Payment::class);
+    }
+    function package_redeems() {
+        return $this->hasMany(AppointmentPackageRedeem::class);
+    }
 }
