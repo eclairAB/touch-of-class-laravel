@@ -2,6 +2,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use App\Models\AppointmentPackageRedeem;
+use App\Models\AppointmentComboRedeem;
+use App\Models\AppointmentServiceRedeem;
 use Illuminate\Http\Request;
 
 class AppointmentController extends Controller
@@ -9,13 +12,10 @@ class AppointmentController extends Controller
     function appointment_eloquent() {
         return [
             'client',
-            // 'packages.package',
-            // 'combos.combo',
-            // 'services.service',
-            'payments',
-            'package_redeems.package',
-            'combo_redeems.combo.combo_services.service',
-            'service_redeems.service',
+            // 'payments',
+            'packages.package_redeems.package',
+            'combos.combo_redeems.combo.combo_services.service',
+            'services.service_redeems.service',
         ];
     }
     /**
@@ -43,18 +43,18 @@ class AppointmentController extends Controller
 
         $appointment = Appointment::create($payload);
         if(isset($payload['packages'])) {
-            $appointment->packages()->createMany($payload['packages']);
-            $this->map_package_redeems($appointment, $payload['packages']);
+            $appointment_packages = $appointment->packages()->createMany($payload['packages']);
+            $this->map_package_redeems($appointment_packages[0]['id'], $payload['packages'], $payload['branch_id']);
         }
         if(isset($payload['combos'])) {
-            $appointment->combos()->createMany($payload['combos']);
-            $this->map_combo_redeems($appointment, $payload['combos']);
+            $appointment_combos = $appointment->combos()->createMany($payload['combos']);
+            $this->map_combo_redeems($appointment_combos[0]['id'], $payload['combos'], $payload['branch_id']);
         }
         if(isset($payload['services'])) {
-            $appointment->services()->createMany($payload['services']);
-            $this->map_service_redeems($appointment, $payload['services']);
+            $appointment_services = $appointment->services()->createMany($payload['services']);
+            $this->map_service_redeems($appointment_services[0]['id'], $payload['services'], $payload['branch_id']);
         }
-        $appointment->payments()->create($payment);
+        // $appointment->payments()->create($payment);
 
         return response()->json($appointment, 201);
     }
@@ -88,52 +88,52 @@ class AppointmentController extends Controller
     }
 
 
-        function map_package_redeems($appointment, $payload) {
+        function map_package_redeems($appointment_package_id, $payload, $branch_id) {
             # expects \Appointment, $payload->sessions
 
             foreach($payload as $key => $item) {
                 for ($i=0; $i < $item['sessions']; $i++) {
                     $package_redeem[$key][] = [
-                        'package_id'        => $item['id'],
-                        'branch_id'         => null,
-                        'stylist_id'        => null,
-                        'session_no'        => 1 + $i,
-                        'paid'              => false,
+                        'appointment_package_id'    => $appointment_package_id,
+                        'branch_id'                 => $branch_id,
+                        'stylist_id'                => null,
+                        'session_no'                => 1 + $i,
+                        'paid'                      => false,
                     ];
                 }
-                $appointment->package_redeems()->createMany($package_redeem[$key]);
+                AppointmentPackageRedeem::insert($package_redeem[$key]);
             }
         }
-        function map_combo_redeems($appointment, $payload) {
+        function map_combo_redeems($appointment_combo_id, $payload, $branch_id) {
             # expects \Appointment, $payload->sessions
 
             foreach($payload as $key => $item) {
                 for ($i=0; $i < count($item['combo_services']); $i++) {
                     $combo_redeem[$key][] = [
-                        'combo_id'          => $item['id'],
-                        'branch_id'         => null,
-                        'stylist_id'        => null,
-                        'service_no'        => 1 + $i,
-                        'paid'              => false,
+                        'appointment_combo_id'  => $appointment_combo_id,
+                        'branch_id'             => $branch_id,
+                        'stylist_id'            => null,
+                        'service_no'            => 1 + $i,
+                        'paid'                  => false,
                     ];
                 }
-                $appointment->combo_redeems()->createMany($combo_redeem[$key]);
+                AppointmentComboRedeem::insert($combo_redeem[$key]);
             }
         }
-        function map_service_redeems($appointment, $payload) {
+        function map_service_redeems($appointment_service_id, $payload, $branch_id) {
             # expects \Appointment, $payload->sessions
 
             foreach($payload as $key => $item) {
                 // for ($i=0; $i < $item['services']; $i++) {
                     $service_redeems[$key][] = [
-                        'service_id'        => $item['id'],
-                        'branch_id'         => null,
-                        'stylist_id'        => null,
-                        // 'session_no'        => 1 + $i,
-                        'paid'              => false,
+                        'appointment_service_id'    => $appointment_service_id,
+                        'branch_id'                 => $branch_id,
+                        'stylist_id'                => null,
+                        // 'session_no'                => 1 + $i,
+                        'paid'                      => false,
                     ];
                 // }
-                $appointment->service_redeems()->createMany($service_redeems[$key]);
+                AppointmentServiceRedeem::insert($service_redeems[$key]);
             }
         }
 }

@@ -10,7 +10,6 @@ class AppointmentPackageRedeem extends Model
     use HasFactory;
     protected $fillable = [
         'appointment_package_id',
-        'package_id',
         'branch_id',
         'cashier_id',
         'stylist_id',

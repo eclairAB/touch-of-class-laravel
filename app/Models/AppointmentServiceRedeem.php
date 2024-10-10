@@ -10,7 +10,6 @@ class AppointmentServiceRedeem extends Model
     use HasFactory;
     protected $fillable = [
         'appointment_service_id',
-        'service_id',
         'branch_id',
         'cashier_id',
         'stylist_id',
