@@ -16,4 +16,13 @@ class AppointmentServiceRedeem extends Model
         'session_no',
         'paid',
     ];
+    function stylist() {
+        return $this->belongsTo(User::class, 'stylist_id', 'id');
+    }
+    function cashier() {
+        return $this->belongsTo(User::class, 'cashier_id', 'id');
+    }
+    function branch() {
+        return $this->belongsTo(Branch::class);
+    }
 }

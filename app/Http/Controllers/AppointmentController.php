@@ -5,6 +5,7 @@ use App\Models\Appointment;
 use App\Models\AppointmentPackageRedeem;
 use App\Models\AppointmentComboRedeem;
 use App\Models\AppointmentServiceRedeem;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
 class AppointmentController extends Controller
@@ -15,7 +16,7 @@ class AppointmentController extends Controller
             // 'payments',
             'appointment_packages.package_redeems',
             'appointment_packages.package',
-            'appointment_combos.combo_redeems',
+            'appointment_combos.combo_redeems.service',
             'appointment_combos.combo.combo_services.service',
             'appointment_services.service_redeems',
             'appointment_services.service',
@@ -107,7 +108,7 @@ class AppointmentController extends Controller
                 for ($i=0; $i < $item['sessions']; $i++) {
                     $package_redeem[$key][] = [
                         'appointment_package_id'    => $appointment_package[$key]['id'],
-                        'branch_id'                 => $payload['branch_id'],
+                        'branch_id'                 => null,
                         'stylist_id'                => null,
                         'session_no'                => 1 + $i,
                         'paid'                      => false,
@@ -123,9 +124,9 @@ class AppointmentController extends Controller
                 for ($i=0; $i < count($item['combo_services']); $i++) {
                     $combo_redeem[$key][] = [
                         'appointment_combo_id'  => $appointment_combo[$key]['id'],
-                        'branch_id'             => $payload['branch_id'],
+                        'branch_id'             => null,
                         'stylist_id'            => null,
-                        'service_no'            => 1 + $i,
+                        'service_id'            => $item['combo_services'][$i]['service_id'],
                         'paid'                  => false,
                     ];
                 }
@@ -139,7 +140,7 @@ class AppointmentController extends Controller
                 // for ($i=0; $i < $item['services']; $i++) {
                     $service_redeems[$key][] = [
                         'appointment_service_id'    => $appointment_service[$key]['id'],
-                        'branch_id'                 => $payload['branch_id'],
+                        'branch_id'                 => null,
                         'stylist_id'                => null,
                         // 'session_no'                => 1 + $i,
                         'paid'                      => false,
@@ -148,4 +149,39 @@ class AppointmentController extends Controller
                 AppointmentServiceRedeem::insert($service_redeems[$key]);
             }
         }
+
+    public function upload_loyalty_cards (Request $request) {
+
+        $files = $request->file('images');
+        $savedFiles = [];
+
+        foreach ($files as $file) {
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('uploads/client/loyalty/appointment/' . $request->appointment_id, $fileName, 'public'); // Save in 'storage/app/public/uploads'
+
+            $savedFiles[] = $filePath;
+        }
+
+        return response()->json([
+            'message' => 'Files uploaded successfully',
+            'files' => $savedFiles
+        ], 200);
+        // $url = Storage::disk('local')->put('uploads/client/loyalty/appointment/' . $request->appointment_id, $request->file('vax_photo'), 'public');
+    }
+
+    public function fetch_loyalty_card($client_id) {
+
+    }
+
+    function redeems(Request $request) {
+        $columns = ['id', 'branch_id', 'cashier_id', 'stylist_id'];
+
+        $salads = AppointmentPackageRedeem::select($columns)->with('stylist','cashier','branch');
+        $mains = AppointmentComboRedeem::select($columns)->with('stylist','cashier','branch');
+        $drinks = AppointmentServiceRedeem::select($columns)->with('stylist','cashier','branch');
+        $merged = $salads->union($mains)->union($drinks);
+        $results = $merged->whereNotNull('branch_id')->get();
+
+        return response()->json($results);
+    }
 }

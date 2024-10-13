@@ -18,13 +18,14 @@ return new class extends Migration
             $table->unsignedBigInteger('branch_id')->nullable();
             $table->unsignedBigInteger('cashier_id')->nullable();
             $table->unsignedBigInteger('stylist_id')->nullable();
-            $table->smallInteger('service_no')->nullable()->default(1);
+            $table->unsignedBigInteger('service_id')->nullable();
             $table->boolean('paid')->nullable()->default(false);
 
             $table->foreign('appointment_combo_id')->references('id')->on('appointment_combos')->onDelete('cascade');
             $table->foreign('branch_id')->references('id')->on('branches');
             $table->foreign('cashier_id')->references('id')->on('users');
             $table->foreign('stylist_id')->references('id')->on('users');
+            $table->foreign('service_id')->references('id')->on('services');
         });
     }
 

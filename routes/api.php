@@ -7,6 +7,7 @@ use App\Http\Controllers\BranchController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ComboController;
 use App\Http\Controllers\PackageController;
+use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\UserController;
@@ -28,8 +29,12 @@ Route::post('login', [UserController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group( function () {
     Route::post('logout', [UserController::class, 'logout']);
+    Route::post('redeems', [AppointmentController::class, 'redeems']);
 
     Route::group(['prefix' => 'product'], function () {
+        Route::post('upload_loyalty_cards', [AppointmentController::class, 'upload_loyalty_cards']);
+        Route::get('fetch_loyalty_card/{client_id}', [AppointmentController::class, 'fetch_loyalty_card']);
+
         Route::group(['prefix' => 'avail'], function () {
             Route::post('combo', [ProductsController::class, 'avail_combo']);
             Route::post('package', [ProductsController::class, 'avail_package']);

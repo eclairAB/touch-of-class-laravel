@@ -13,7 +13,20 @@ class AppointmentComboRedeem extends Model
         'branch_id',
         'cashier_id',
         'stylist_id',
-        'session_no',
+        'service_id',
         'paid',
     ];
+
+    function service() {
+        return $this->belongsTo(Service::class);
+    }
+    function stylist() {
+        return $this->belongsTo(User::class, 'stylist_id', 'id');
+    }
+    function cashier() {
+        return $this->belongsTo(User::class, 'cashier_id', 'id');
+    }
+    function branch() {
+        return $this->belongsTo(Branch::class);
+    }
 }
