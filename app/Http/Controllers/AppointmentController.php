@@ -157,7 +157,7 @@ class AppointmentController extends Controller
 
         foreach ($files as $file) {
             $fileName = time() . '_' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('uploads/client/loyalty/appointment/' . $request->appointment_id, $fileName, 'public'); // Save in 'storage/app/public/uploads'
+            $filePath = Storage::disk('public')->put('uploads/client/loyalty/appointment/' . $request->appointment_id, $file, 'public'); // Save in 'storage/app/public/uploads'
 
             $savedFiles[] = $filePath;
         }
@@ -170,7 +170,25 @@ class AppointmentController extends Controller
     }
 
     public function fetch_loyalty_card($client_id) {
+        $appointment_ids = Appointment::where('client_id', $client_id)->pluck('id');
 
+        $files = [];
+        foreach ($appointment_ids as $id) {
+            $appointment_files = Storage::disk('public')->allFiles("uploads/client/loyalty/appointment/$id/");
+            if (count($appointment_files) > 0) {
+                $files = array_merge($files, $appointment_files);
+            }
+        }
+
+        $images = array_filter($files, function($file) {
+            return preg_match('/\.(jpg|jpeg|png|gif)$/i', $file);
+        });
+
+        foreach ($images as $key => $image) {
+            $images[$key] = env('APP_URL') . '/storage/' .$image;
+        }
+
+        return response()->json($images);
     }
 
     function redeems(Request $request) {
