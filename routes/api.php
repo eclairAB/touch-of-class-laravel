@@ -13,21 +13,19 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\UserController;
 
 
-Route::apiResource('appointments', AppointmentController::class);
-Route::apiResource('branches', BranchController::class);
-Route::apiResource('clients', ClientController::class);
-Route::apiResource('combos', ComboController::class);
-Route::apiResource('packages', PackageController::class);
-Route::apiResource('payments', PaymentController::class);
-Route::apiResource('services', ServiceController::class);
-Route::apiResource('users', UserController::class);
-
-
-
-
 Route::post('login', [UserController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group( function () {
+    Route::apiResource('appointments', AppointmentController::class);
+    Route::apiResource('branches', BranchController::class);
+    Route::apiResource('clients', ClientController::class);
+    Route::apiResource('combos', ComboController::class);
+    Route::apiResource('packages', PackageController::class);
+    Route::apiResource('payments', PaymentController::class);
+    Route::apiResource('services', ServiceController::class);
+    Route::apiResource('users', UserController::class);
+
+
     Route::post('logout', [UserController::class, 'logout']);
     Route::post('redeems', [AppointmentController::class, 'redeems']);
 

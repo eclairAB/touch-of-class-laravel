@@ -19,14 +19,14 @@ class PaymentController extends Controller
         return response()->json($payments);
     }
 
-    // /**
-    //  * Store a newly created resource in storage.
-    //  */
-    // public function store(Request $request)
-    // {
-    //     $service = Payment::create($request->toArray());
-    //     return response()->json($service, 201);
-    // }
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $service = Payment::create($request->toArray());
+        return response()->json($service, 201);
+    }
 
     // /**
     //  * Display the specified resource.

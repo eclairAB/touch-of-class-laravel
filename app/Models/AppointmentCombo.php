@@ -9,12 +9,8 @@ class AppointmentCombo extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'appointment_id',
         'combo_id',
-        'branch_id',
-        'stylist_id',
-        'session_no',
-        'paid',
+        'balance',
     ];
 
     function combo() {

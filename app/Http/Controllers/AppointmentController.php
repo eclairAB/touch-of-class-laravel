@@ -37,13 +37,15 @@ class AppointmentController extends Controller
     public function store(Request $request)
     {
         $payload = $request->toArray();
-        $payment = [
-            'amount_paid' => $request->amount_paid,
-            'branch_id' => $request->branch_id,
-        ];
+        // $payment = [
+        //     'amount_paid' => $request->amount_paid,
+        //     'branch_id' => $request->branch_id,
+        // ];
         if($request->amount_paid >= $request->amount_payable) {
             $payload['fully_paid'] = true;
         }
+
+        $payload = $this->handle_payment($payload);
 
         $appointment = Appointment::create($payload);
         if(isset($payload['packages'])) {
@@ -111,7 +113,7 @@ class AppointmentController extends Controller
                         'branch_id'                 => null,
                         'stylist_id'                => null,
                         'session_no'                => 1 + $i,
-                        'paid'                      => false,
+                        'paid'                      => (1 + $i) <= $item['redeems_paid'],
                     ];
                 }
                 AppointmentPackageRedeem::insert($package_redeem[$key]);
@@ -127,7 +129,7 @@ class AppointmentController extends Controller
                         'branch_id'             => null,
                         'stylist_id'            => null,
                         'service_id'            => $item['combo_services'][$i]['service_id'],
-                        'paid'                  => false,
+                        'paid'                  => (1 + $i) <= $item['redeems_paid'],
                     ];
                 }
                 AppointmentComboRedeem::insert($combo_redeem[$key]);
@@ -137,17 +139,72 @@ class AppointmentController extends Controller
             # expects \Appointment, $payload->sessions
 
             foreach($payload['services'] as $key => $item) {
-                // for ($i=0; $i < $item['services']; $i++) {
                     $service_redeems[$key][] = [
                         'appointment_service_id'    => $appointment_service[$key]['id'],
                         'branch_id'                 => null,
                         'stylist_id'                => null,
-                        // 'session_no'                => 1 + $i,
-                        'paid'                      => false,
+                        'paid'                      => $item['redeems_paid'],
                     ];
-                // }
                 AppointmentServiceRedeem::insert($service_redeems[$key]);
             }
+        }
+        function handle_payment($payload) {
+            $total_products = 0;
+            $total_products += count($payload['packages']);
+            $total_products += count($payload['combos']);
+            $total_products += count($payload['services']);
+
+            foreach ($payload as $key => $value) {
+                if($key == 'packages') {
+                    foreach ($value as $product_key => $product) {
+                        $values = $this->payment_calc($product, $payload);
+
+                        $payload['packages'][$product_key]['payment_share'] = $values->payment_share;
+                        $payload['packages'][$product_key]['balance'] = $values->balance;
+                        $payload['packages'][$product_key]['redeems_paid'] = $values->redeems_paid;
+                    }
+                }
+                if($key == 'combos') {
+                    foreach ($value as $product_key => $product) {
+                        $values = $this->payment_calc($product, $payload);
+
+                        $payload['combos'][$product_key]['payment_share'] = $values->payment_share;
+                        $payload['combos'][$product_key]['balance'] = $values->balance;
+                        $payload['combos'][$product_key]['redeems_paid'] = $values->redeems_paid;
+                    }
+                }
+                if($key == 'services') {
+                    foreach ($value as $product_key => $product) {
+                        $values = $this->payment_calc($product, $payload);
+
+                        $payload['services'][$product_key]['payment_share'] = $values->payment_share;
+                        $payload['services'][$product_key]['balance'] = $values->balance;
+                        $payload['services'][$product_key]['redeems_paid'] = $values->redeems_paid;
+                    }
+                }
+            }
+
+            return $payload;
+        }
+
+        function payment_calc($product, $payload) {
+            $values = (object)[];
+            $values->percentage     = round(($product['price'] / $payload['amount_payable']), 2);
+
+            $values->payment_share  = $payload['amount_paid'] * $values->percentage;
+            $values->balance        = $product['price'] - $values->payment_share;
+            $values->balance        = $payload['amount_paid'] == $payload['amount_payable'] ? 0 : $values->balance;
+
+            if(isset($product['sessions'])) {
+                $values->redeems_paid = floor($values->payment_share / ($product['price'] / $product['sessions']));
+            }
+            elseif(isset($product['combo_services'])) {
+                $values->redeems_paid = floor($values->payment_share / ($product['price'] / count($product['combo_services'])));
+            }
+            else {
+                $values->redeems_paid = $values->balance == 0;
+            }
+            return $values;
         }
 
     public function upload_loyalty_cards (Request $request) {
@@ -166,7 +223,6 @@ class AppointmentController extends Controller
             'message' => 'Files uploaded successfully',
             'files' => $savedFiles
         ], 200);
-        // $url = Storage::disk('local')->put('uploads/client/loyalty/appointment/' . $request->appointment_id, $request->file('vax_photo'), 'public');
     }
 
     public function fetch_loyalty_card($client_id) {

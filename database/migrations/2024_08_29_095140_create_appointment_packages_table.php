@@ -16,6 +16,7 @@ return new class extends Migration
             $table->timestamps();
             $table->unsignedBigInteger('appointment_id')->nullable();
             $table->unsignedBigInteger('package_id')->nullable();
+            $table->decimal('balance', 8, 2)->nullable();
 
             $table->foreign('appointment_id')->references('id')->on('appointments')->onDelete('cascade');
             $table->foreign('package_id')->references('id')->on('packages');

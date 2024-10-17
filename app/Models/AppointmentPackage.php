@@ -10,6 +10,7 @@ class AppointmentPackage extends Model
     use HasFactory;
     protected $fillable=[
         'package_id',
+        'balance',
     ];
 
     function package() {
