@@ -38,6 +38,10 @@ Route::middleware('auth:sanctum')->group( function () {
             Route::post('package', [ProductsController::class, 'avail_package']);
             Route::post('service', [ProductsController::class, 'avail_service']);
         });
+
+        Route::group(['prefix' => 'payment'], function () {
+            Route::post('create', [PaymentController::class, 'make_payment']);
+        });
     });
     Route::group(['prefix' => 'staffs'], function () {
         Route::post('search', [UserController::class, 'search_staff']);

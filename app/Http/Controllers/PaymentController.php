@@ -2,6 +2,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Payment;
+use App\Models\AppointmentPackageRedeem;
+use App\Models\AppointmentComboRedeem;
+use App\Models\AppointmentServiceRedeem;
+use App\Models\AppointmentPackage;
+use App\Models\AppointmentCombo;
+use App\Models\AppointmentService;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
@@ -11,11 +17,7 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        $payments = Payment::with(
-            'appointment.package_redeems',
-            'appointment.combo_redeems',
-            'appointment.service_redeems',
-            )->get();
+        $payments = Payment::get();
         return response()->json($payments);
     }
 
@@ -28,31 +30,60 @@ class PaymentController extends Controller
         return response()->json($service, 201);
     }
 
-    // /**
-    //  * Display the specified resource.
-    //  */
-    // public function show(string $id)
-    // {
-    //     $service = Payment::find($id);
-    //     return response()->json($service);
-    // }
+    public function make_payment(Request $request) {
+        $payment_payload = [
+            'amount' => $request->amount,
+            'payment_milestone' => 'Follow Up payment',
+            'payment_method' => $request->payment_method,
+        ];
 
-    // /**
-    //  * Update the specified resource in storage.
-    //  */
-    // public function update(Request $request, string $id)
-    // {
-    //     $service = Payment::findOrFail($id);
-    //     $service->update($request->toArray());
-    //     return response()->json(['message' => 'Payment updated successfully', 'service' => $service], 200);
-    // }
+        if(isset($request->package_redeem_id)) {
+            $redeem = AppointmentPackage::find($request->package_redeem_id);
+            $redeem->balance-=$request->amount;
+            $redeem->save();
 
-    // /**
-    //  * Remove the specified resource from storage.
-    //  */
-    // public function destroy(string $id)
-    // {
-    //     Payment::where('id', $id)->delete();
-    //     return response()->json(['message' => 'Payment deleted successfully'], 200);
-    // }
+            $payment_payload['appointment_package_id'] = $redeem->id;
+
+            $product = AppointmentPackageRedeem::whereHas('appointment_package', function($q) use($request) {
+                $q->where('id', $request->package_redeem_id);
+            })->where('paid', false)->first();
+            if($product) {
+                $product->paid = true;
+                $product->save();
+            }
+        }
+        elseif(isset($request->combo_redeem_id)) {
+            $redeem = AppointmentCombo::find($request->combo_redeem_id);
+            $redeem->balance-=$request->amount;
+            $redeem->save();
+
+            $payment_payload['appointment_combo_id'] = $redeem->id;
+
+            $product = AppointmentComboRedeem::whereHas('appointment_combo', function($q) use($request) {
+                $q->where('id', $request->combo_redeem_id);
+            })->where('paid', false)->first();
+            if($product) {
+                $product->paid = true;
+                $product->save();
+            }
+        }
+        elseif(isset($request->service_redeem_id)) {
+            $redeem = AppointmentService::find($request->service_redeem_id);
+            $redeem->balance-=$request->amount;
+            $redeem->save();
+
+            $payment_payload['appointment_service_id'] = $redeem->id;
+
+            $product = AppointmentServiceRedeem::whereHas('appointment_service', function($q) use($request) {
+                $q->where('id', $request->service_redeem_id);
+            })->where('paid', false)->first();
+            if($product) {
+                $product->paid = true;
+                $product->save();
+            }
+        }
+
+        Payment::create($payment_payload);
+        return response()->json(200);
+    }
 }

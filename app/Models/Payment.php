@@ -14,11 +14,15 @@ class Payment extends Model
         'appointment_service_id',
         'amount_paid',
         'branch_id',
+        'cashier_id',
         'payment_milestone',
         'payment_method',
     ];
 
     function branch() {
         return $this->belongsTo(Branch::class);
+    }
+    function cashier() {
+        return $this->belongsTo(User::class);
     }
 }

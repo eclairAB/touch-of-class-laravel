@@ -17,6 +17,9 @@ class AppointmentComboRedeem extends Model
         'paid',
     ];
 
+    function appointment_combo() {
+        return $this->belongsTo(AppointmentCombo::class);
+    }
     function service() {
         return $this->belongsTo(Service::class);
     }

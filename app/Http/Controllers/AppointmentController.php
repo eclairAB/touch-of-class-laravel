@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\Payment;
 use App\Models\Appointment;
 use App\Models\AppointmentPackageRedeem;
 use App\Models\AppointmentComboRedeem;
@@ -150,9 +151,15 @@ class AppointmentController extends Controller
         }
         function handle_payment($payload) {
             $total_products = 0;
-            $total_products += count($payload['packages']);
-            $total_products += count($payload['combos']);
-            $total_products += count($payload['services']);
+            if(isset($payload['packages'])) {
+                $total_products += count($payload['packages']);
+            }
+            if(isset($payload['combos'])) {
+                $total_products += count($payload['combos']);
+            }
+            if(isset($payload['services'])) {
+                $total_products += count($payload['services']);
+            }
 
             foreach ($payload as $key => $value) {
                 if($key == 'packages') {
@@ -205,6 +212,10 @@ class AppointmentController extends Controller
                 $values->redeems_paid = $values->balance == 0;
             }
             return $values;
+        }
+
+        function save_payment_record() {
+            // Payment::create()
         }
 
     public function upload_loyalty_cards (Request $request) {
