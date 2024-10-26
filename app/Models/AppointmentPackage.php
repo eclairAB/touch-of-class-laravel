@@ -13,6 +13,9 @@ class AppointmentPackage extends Model
         'balance',
     ];
 
+    function appointment() {
+        return $this->belongsTo(Appointment::class);
+    }
     function package() {
         return $this->belongsTo(Package::class);
     }

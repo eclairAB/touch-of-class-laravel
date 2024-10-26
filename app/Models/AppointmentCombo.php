@@ -13,6 +13,9 @@ class AppointmentCombo extends Model
         'balance',
     ];
 
+    function appointment() {
+        return $this->belongsTo(Appointment::class);
+    }
     function combo() {
         return $this->belongsTo(Combo::class);
     }

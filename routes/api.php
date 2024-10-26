@@ -7,6 +7,7 @@ use App\Http\Controllers\BranchController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ComboController;
 use App\Http\Controllers\PackageController;
+use App\Http\Controllers\PdfController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ServiceController;
@@ -14,6 +15,10 @@ use App\Http\Controllers\UserController;
 
 
 Route::post('login', [UserController::class, 'login']);
+Route::group(['prefix' => 'reports'], function () {
+    Route::get('branch/{branch_id}', [PdfController::class, 'branch_report']);
+    Route::get('staff/{staff_id}', [PdfController::class, 'staff_report']);
+});
 
 Route::middleware('auth:sanctum')->group( function () {
     Route::apiResource('appointments', AppointmentController::class);

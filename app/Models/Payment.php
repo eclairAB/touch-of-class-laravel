@@ -27,4 +27,13 @@ class Payment extends Model
     function cashier() {
         return $this->belongsTo(User::class);
     }
+    function appointment_package() {
+        return $this->belongsTo(AppointmentPackage::class);
+    }
+    function appointment_combo() {
+        return $this->belongsTo(AppointmentCombo::class);
+    }
+    function appointment_service() {
+        return $this->belongsTo(AppointmentService::class);
+    }
 }

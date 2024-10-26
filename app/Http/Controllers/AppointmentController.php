@@ -119,7 +119,7 @@ class AppointmentController extends Controller
                     ];
                 }
 
-                $this->save_payment_record('appointment_package_id', $appointment_package[$key]['id'], $payload);
+                $this->save_payment_record('appointment_package_id', $appointment_package[$key]['id'], $key, $payload);
                 AppointmentPackageRedeem::insert($package_redeem[$key]);
             }
         }
@@ -137,7 +137,7 @@ class AppointmentController extends Controller
                     ];
                 }
 
-                $this->save_payment_record('appointment_combo_id', $appointment_combo[$key]['id'], $payload);
+                $this->save_payment_record('appointment_combo_id', $appointment_combo[$key]['id'], $key, $payload);
                 AppointmentComboRedeem::insert($combo_redeem[$key]);
             }
         }
@@ -152,7 +152,7 @@ class AppointmentController extends Controller
                         'paid'                      => $item['redeems_paid'],
                     ];
 
-                $this->save_payment_record('appointment_service_id', $appointment_service[$key]['id'], $payload);
+                $this->save_payment_record('appointment_service_id', $appointment_service[$key]['id'], $key, $payload);
                 AppointmentServiceRedeem::insert($service_redeems[$key]);
             }
         }
@@ -221,12 +221,25 @@ class AppointmentController extends Controller
             return $values;
         }
 
-        function save_payment_record($product_column, $appointment_product_id, $payload) {
+        function save_payment_record($product_column, $appointment_product_id, $nth_service, $payload) {
+            switch ($product_column) {
+                case 'appointment_package_id':
+                    $product_type = 'packages';
+                    break;
+                case 'appointment_combo_id':
+                    $product_type = 'combos';
+                    break;
+                case 'appointment_service_id':
+                    $product_type = 'services';
+                    break;
+            }
+
             $payload[$product_column]       = $appointment_product_id;
             $payload['cashier_id']          = Auth::user()->id;
+            $payload['amount_paid']         = $payload[$product_type][$nth_service]['payment_share'];
             $payload['payment_method']      = $payload['payment_type'];
-            $payload['reference_no']        = $payload['reference'];
-            $payload['biller_name']         = $payload['biller'];
+            $payload['reference_no']        = isset($payload['reference']) ? $payload['reference'] : null;
+            $payload['biller_name']         = isset($payload['biller']) ? $payload['biller'] : null;
             $payload['payment_milestone']   = $payload['amount_paid'] >= $payload['amount_payable'] ? 'Full Payment' : 'Downpayment';
 
             Payment::create($payload);
@@ -295,6 +308,7 @@ class AppointmentController extends Controller
                             $q->whereNotNull('branch_id');
                         })
                         ->with(
+                            'branch',
                             'appointment_packages.package_redeems',
                             'appointment_combos.combo_redeems',
                             'appointment_services.service_redeems'

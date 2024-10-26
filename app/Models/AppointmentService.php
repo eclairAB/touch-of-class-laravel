@@ -13,6 +13,9 @@ class AppointmentService extends Model
         'balance',
     ];
 
+    function appointment() {
+        return $this->belongsTo(Appointment::class);
+    }
     function service() {
         return $this->belongsTo(Service::class);
     }

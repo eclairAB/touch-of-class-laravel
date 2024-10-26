@@ -17,7 +17,13 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        $payments = Payment::get();
+        $payments = Payment::with(
+                'branch',
+                'cashier',
+                'appointment_package.appointment.client',
+                'appointment_combo.appointment.client',
+                'appointment_service.appointment.client'
+            )->get();
         return response()->json($payments);
     }
 
