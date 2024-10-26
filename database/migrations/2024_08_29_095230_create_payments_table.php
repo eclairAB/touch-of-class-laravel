@@ -22,6 +22,8 @@ return new class extends Migration
             $table->decimal('amount_paid', 8, 2)->nullable();
             $table->string('payment_milestone')->nullable(); // stores "downpayment", "follow-up", "final payment"
             $table->string('payment_method')->nullable();
+            $table->string('reference_no')->nullable();
+            $table->string('biller_name')->nullable();
 
 
             $table->foreign('appointment_package_id')->references('id')->on('appointment_packages')->onDelete('cascade');

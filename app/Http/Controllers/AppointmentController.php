@@ -6,6 +6,7 @@ use App\Models\Appointment;
 use App\Models\AppointmentPackageRedeem;
 use App\Models\AppointmentComboRedeem;
 use App\Models\AppointmentServiceRedeem;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
@@ -117,6 +118,8 @@ class AppointmentController extends Controller
                         'paid'                      => (1 + $i) <= $item['redeems_paid'],
                     ];
                 }
+
+                $this->save_payment_record('appointment_package_id', $appointment_package[$key]['id'], $payload);
                 AppointmentPackageRedeem::insert($package_redeem[$key]);
             }
         }
@@ -133,6 +136,8 @@ class AppointmentController extends Controller
                         'paid'                  => (1 + $i) <= $item['redeems_paid'],
                     ];
                 }
+
+                $this->save_payment_record('appointment_combo_id', $appointment_combo[$key]['id'], $payload);
                 AppointmentComboRedeem::insert($combo_redeem[$key]);
             }
         }
@@ -146,6 +151,8 @@ class AppointmentController extends Controller
                         'stylist_id'                => null,
                         'paid'                      => $item['redeems_paid'],
                     ];
+
+                $this->save_payment_record('appointment_service_id', $appointment_service[$key]['id'], $payload);
                 AppointmentServiceRedeem::insert($service_redeems[$key]);
             }
         }
@@ -214,8 +221,15 @@ class AppointmentController extends Controller
             return $values;
         }
 
-        function save_payment_record() {
-            // Payment::create()
+        function save_payment_record($product_column, $appointment_product_id, $payload) {
+            $payload[$product_column]       = $appointment_product_id;
+            $payload['cashier_id']          = Auth::user()->id;
+            $payload['payment_method']      = $payload['payment_type'];
+            $payload['reference_no']        = $payload['reference'];
+            $payload['biller_name']         = $payload['biller'];
+            $payload['payment_milestone']   = $payload['amount_paid'] >= $payload['amount_payable'] ? 'Full Payment' : 'Downpayment';
+
+            Payment::create($payload);
         }
 
     public function upload_loyalty_cards (Request $request) {
@@ -259,14 +273,34 @@ class AppointmentController extends Controller
     }
 
     function redeems(Request $request) {
-        $columns = ['id', 'branch_id', 'cashier_id', 'stylist_id'];
+        // $columns = ['id', 'branch_id', 'cashier_id', 'stylist_id'];
 
-        $salads = AppointmentPackageRedeem::select($columns)->with('stylist','cashier','branch');
-        $mains = AppointmentComboRedeem::select($columns)->with('stylist','cashier','branch');
-        $drinks = AppointmentServiceRedeem::select($columns)->with('stylist','cashier','branch');
-        $merged = $salads->union($mains)->union($drinks);
-        $results = $merged->whereNotNull('branch_id')->get();
+        // $salads = AppointmentPackageRedeem::select($columns)->with('stylist','cashier','branch');
+        // $mains = AppointmentComboRedeem::select($columns)->with('stylist','cashier','branch');
+        // $drinks = AppointmentServiceRedeem::select($columns)->with('stylist','cashier','branch');
+        // $merged = $salads->union($mains)->union($drinks);
+        // $results = $merged->whereNotNull('branch_id')->get();
 
-        return response()->json($results);
+        // return response()->json($results);
+
+
+
+        $appointments = Appointment::whereHas('appointment_packages.package_redeems', function($q) {
+                            $q->whereNotNull('branch_id');
+                        })
+                        ->orWhereHas('appointment_combos.combo_redeems', function($q) {
+                            $q->whereNotNull('branch_id');
+                        })
+                        ->orWhereHas('appointment_services.service_redeems', function($q) {
+                            $q->whereNotNull('branch_id');
+                        })
+                        ->with(
+                            'appointment_packages.package_redeems',
+                            'appointment_combos.combo_redeems',
+                            'appointment_services.service_redeems'
+                        )
+                        ->get();
+
+        return response()->json($appointments);
     }
 }

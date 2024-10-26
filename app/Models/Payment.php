@@ -17,6 +17,8 @@ class Payment extends Model
         'cashier_id',
         'payment_milestone',
         'payment_method',
+        'reference_no',
+        'biller_name',
     ];
 
     function branch() {
