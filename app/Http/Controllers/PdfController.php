@@ -43,7 +43,7 @@ class PdfController extends Controller
 
     public function staff_report($staff_id)
     {
-        $staff = User::find($staff_id);
+        $staff = User::with('role')->find($staff_id);
 
         $payments = Payment::where('cashier_id', $staff_id)
             ->with(
@@ -59,7 +59,7 @@ class PdfController extends Controller
             ->get();
 
         $data = [
-            'title' => "Report for $staff->first_name $staff->last_name",
+            'staff' => $staff,
             'date' => date('m/d/Y'),
             'content' => 'This is a sample PDF generated using Laravel and dompdf.',
             'payments' => $payments,
