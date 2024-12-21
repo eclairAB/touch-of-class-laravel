@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\ComboController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\PdfController;
@@ -28,6 +29,7 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::apiResource('packages', PackageController::class);
     Route::apiResource('payments', PaymentController::class);
     Route::apiResource('services', ServiceController::class);
+    Route::apiResource('discounts', DiscountController::class);
     Route::apiResource('users', UserController::class);
 
 
