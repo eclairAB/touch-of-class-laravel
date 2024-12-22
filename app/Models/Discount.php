@@ -12,8 +12,5 @@ class Discount extends Model
         'discount_name',
         'percentage',
         'amount',
-        'appointment_package_id',
-        'appointment_combo_id',
-        'appointment_service_id',
     ];
 }

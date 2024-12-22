@@ -11,4 +11,8 @@ class Branch extends Model
     protected $fillable = [
         'name',
     ];
+
+    function user() {
+        return $this->hasMany(User::class, 'assigned_branch_id', 'id');
+    }
 }

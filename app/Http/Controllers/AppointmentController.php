@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Payment;
 use App\Models\Appointment;
+use Illuminate\Support\Carbon;
 use App\Models\AppointmentPackageRedeem;
 use App\Models\AppointmentComboRedeem;
 use App\Models\AppointmentServiceRedeem;
@@ -278,11 +279,15 @@ class AppointmentController extends Controller
             return preg_match('/\.(jpg|jpeg|png|gif)$/i', $file);
         });
 
-        foreach ($images as $key => $image) {
-            $images[$key] = env('APP_URL') . '/storage/' .$image;
+        $imageDetails = [];
+        foreach ($images as $image) {
+            $imageDetails[] = [
+                'url' => env('APP_URL') . '/storage/' . $image,
+                'upload_date' => Carbon::createFromTimestamp(Storage::disk('public')->lastModified($image))->format('M j, Y'),
+            ];
         }
 
-        return response()->json($images);
+        return response()->json($imageDetails);
     }
 
     function redeems(Request $request) {

@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Branch;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -86,7 +87,7 @@ class UserController extends Controller
                 $query->where('name', $request->role);
             });
         }
-        $users = $users->with('role')->get();
+        $users = $users->with('role', 'branch')->get();
 
         return response()->json($users);
     }
@@ -97,6 +98,9 @@ class UserController extends Controller
             $user = Auth::user();
             $user['token'] = $user->createToken('api-token')->plainTextToken;
             $user['role'] = Role::find($user->id);
+            $user['branch'] = Branch::whereHas('user', function ($q) use($user) {
+                                $q->where('id', $user->id);
+                            })->first();
 
             return response()->json($user);
         }

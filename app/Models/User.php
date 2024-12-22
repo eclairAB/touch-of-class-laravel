@@ -24,6 +24,7 @@ class User extends Authenticatable
         'email',
         'active_employee',
         'role_id',
+        'assigned_branch_id',
         'password',
     ];
 
@@ -52,5 +53,10 @@ class User extends Authenticatable
 
     function role() {
         return $this->belongsTo(Role::class);
+    }
+
+    function branch() {
+        return $this->belongsTo(Branch::class, 'assigned_branch_id', 'id');
+
     }
 }

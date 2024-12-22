@@ -38,8 +38,8 @@ class FillDummy extends Command
         $this->clear_all();
 
         $this->create_roles();
-        $this->create_user();
         $this->create_branch();
+        $this->create_user();
         $this->create_service();
         $this->create_combo();
         $this->create_package();
@@ -81,6 +81,7 @@ class FillDummy extends Command
             'last_name' => 'Admin',
             'contact_number' => '09999999999',
             'role_id' => 1,
+            'assigned_branch_id' => null,
             'email' => 'admin@example.com',
             'password' => Hash::make('secret'),
             'active_employee' => true,
@@ -90,6 +91,7 @@ class FillDummy extends Command
             'last_name' => 'Cashier',
             'contact_number' => '09999999999',
             'role_id' => 2,
+            'assigned_branch_id' => 1,
             'email' => 'cashier@example.com',
             'password' => Hash::make('secret'),
             'active_employee' => true,
@@ -99,6 +101,7 @@ class FillDummy extends Command
             'last_name' => 'Stylist',
             'contact_number' => '09999999999',
             'role_id' => 3,
+            'assigned_branch_id' => 1,
             'email' => 'stylist@example.com',
             'password' => Hash::make('secret'),
             'active_employee' => true,

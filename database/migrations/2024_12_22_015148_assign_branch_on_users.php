@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('discounts', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-            $table->string('discount_name')->nullable();
-            $table->boolean('percentage')->nullable()->default(false);
-            $table->decimal('amount', 8, 2)->nullable();
+        Schema::table('users', function (Blueprint $table) {
+            $table->unsignedBigInteger('assigned_branch_id')->nullable();
+
+            $table->foreign('assigned_branch_id')->references('id')->on('branches');
         });
     }
 
@@ -25,6 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('discounts');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('assigned_branch_id');
+        });
     }
 };
