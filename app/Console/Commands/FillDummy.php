@@ -47,7 +47,9 @@ class FillDummy extends Command
     }
 
     function clear_all() {
+
         Branch::truncate();
+        Role::truncate();
         User::truncate();
         Service::truncate();
         Combo::truncate();
@@ -60,16 +62,29 @@ class FillDummy extends Command
     function create_roles() {
         $items = [
             [
-                'name' => 'admin',
+                'name' => 'Admin',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
-                'name' => 'cashier',
+                'name' => 'Cashier',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
-                'name' => 'stylist',
+                'name' => 'Stylist',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
-                'name' => 'other_staff',
+                'name' => 'Nurse',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Other Staff',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
         ];
         Role::insert($items);
@@ -85,6 +100,8 @@ class FillDummy extends Command
             'email' => 'admin@example.com',
             'password' => Hash::make('secret'),
             'active_employee' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
         User::create([
             'first_name' => 'Cashier',
@@ -95,6 +112,8 @@ class FillDummy extends Command
             'email' => 'cashier@example.com',
             'password' => Hash::make('secret'),
             'active_employee' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
         User::create([
             'first_name' => 'Stylist',
@@ -105,6 +124,20 @@ class FillDummy extends Command
             'email' => 'stylist@example.com',
             'password' => Hash::make('secret'),
             'active_employee' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        User::create([
+            'first_name' => 'Nurse',
+            'last_name' => 'Nurse',
+            'contact_number' => '09999999999',
+            'role_id' => 4,
+            'assigned_branch_id' => 1,
+            'email' => 'nurse@example.com',
+            'password' => Hash::make('secret'),
+            'active_employee' => true,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
     function create_branch() {
