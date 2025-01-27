@@ -82,6 +82,11 @@ class FillDummy extends Command
                 'updated_at' => now(),
             ],
             [
+                'name' => 'Employee',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
                 'name' => 'Other Staff',
                 'created_at' => now(),
                 'updated_at' => now(),

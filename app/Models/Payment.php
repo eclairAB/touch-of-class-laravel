@@ -19,6 +19,8 @@ class Payment extends Model
         'payment_method',
         'reference_no',
         'biller_name',
+        'discount_paid',
+        'discount_id',
     ];
 
     function branch() {

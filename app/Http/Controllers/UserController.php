@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Branch;
 use App\Models\Role;
+use App\Models\CommissionHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-
+use Carbon\Carbon;
 class UserController extends Controller
 {
     /**
@@ -68,10 +69,43 @@ class UserController extends Controller
         return response()->json(['message' => 'User deleted successfully'], 200);
     }
 
-
-
-
-
+    public function stylist_commissions(Request $req) {
+        $user = Auth::user();
+        $startDate = $req->input('start_date');
+        $endDate = $req->input('end_date');
+        $comq = CommissionHistory::where('stylist_id', $user->id);
+    
+        if ($startDate) {
+            $comq->whereDate('created_at', '>=', $startDate);
+        }
+    
+        if ($endDate) {
+            $comq->whereDate('created_at', '<=', $endDate);
+        }
+    
+        $commissions = $comq->get();
+        $data = [];
+        $totcom = 0;
+    
+        foreach ($commissions as $com) {
+            $comamount = $com->commission_amount;
+            $totcom += $comamount;
+            $data[] = [
+                'commission_amount' => $com->commission_amount,
+                'client' => $com->client->first_name . ' ' . $com->client->last_name,
+                'package' => $com->appointment_package_redeem?->appointment_package?->package?->name,
+                'combo' => $com->appointment_combo_redeem?->appointment_combo?->combo?->name ?? 'N/A',
+                'services' => $com->appointment_service_redeem?->appointment_service?->service?->name ?? 'N/A',
+                'cashier' => $com->appointment_package_redeem->cashier->first_name.' '.$com->appointment_package_redeem->cashier->last_name,
+                'created_at' => Carbon::parse($com->created_at)->format('F d, Y h:i A'),
+            ];
+        }
+    
+        return response()->json([
+            'data' => $data,
+            'total_commission' => number_format($totcom, 2)
+        ]);
+    }    
 
     function search_staff(Request $request) {
         $searchTerms = explode(' ', $request->search);
@@ -97,7 +131,7 @@ class UserController extends Controller
 
             $user = Auth::user();
             $user['token'] = $user->createToken('api-token')->plainTextToken;
-            $user['role'] = Role::find($user->id);
+            $user['role'] = Role::find($user->role_id);
             $user['branch'] = Branch::whereHas('user', function ($q) use($user) {
                                 $q->where('id', $user->id);
                             })->first();

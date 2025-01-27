@@ -5,15 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Branch extends Model
+class StaffDeduction extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'name',
-        'qouta_nurse',
+        'staff_id',
+        'deduction_date',
+        'is_late',
+        'deduction',
     ];
-
-    function user() {
-        return $this->hasMany(User::class, 'assigned_branch_id', 'id');
-    }
 }

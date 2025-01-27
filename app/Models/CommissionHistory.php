@@ -16,4 +16,16 @@ class CommissionHistory extends Model
         'service_redeem_id',
         'commission_amount',
     ];
+    function client() {
+        return $this->belongsTo(Client::class);
+    }
+    function appointment_package_redeem() {
+        return $this->belongsTo(AppointmentPackageRedeem::class, 'package_redeem_id','id');
+    }
+    function appointment_combo_redeem() {
+        return $this->belongsTo(AppointmentComboRedeem::class, 'combo_redeem_id','id');
+    }
+    function appointment_service_redeem() {
+        return $this->belongsTo(AppointmentServiceRedeem::class, 'service_redeem_id','id');
+    }
 }
