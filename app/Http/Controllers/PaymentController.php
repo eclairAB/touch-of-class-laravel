@@ -23,7 +23,7 @@ class PaymentController extends Controller
                 'appointment_package.appointment.client',
                 'appointment_combo.appointment.client',
                 'appointment_service.appointment.client'
-            )->get();
+            )->orderBy('id','desc')->get();
         return response()->json($payments);
     }
 

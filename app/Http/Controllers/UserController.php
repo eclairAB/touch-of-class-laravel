@@ -83,27 +83,40 @@ class UserController extends Controller
             $comq->whereDate('created_at', '<=', $endDate);
         }
     
-        $commissions = $comq->get();
+        $commissions = $comq->orderBy('id','desc')->get();
         $data = [];
         $totcom = 0;
-    
+        $totgross = 0;
         foreach ($commissions as $com) {
             $comamount = $com->commission_amount;
+            $gross_sale = $com->gross_sale;
+            $totgross += $gross_sale; 
             $totcom += $comamount;
+            if ($com->appointment_package_redeem) {
+                $cashier = $com->appointment_package_redeem->cashier->first_name . ' ' . $com->appointment_package_redeem->cashier->last_name;
+            } elseif ($com->appointment_combo_redeem) {
+                $cashier = $com->appointment_combo_redeem->cashier->first_name . ' ' . $com->appointment_combo_redeem->cashier->last_name;
+            } elseif ($com->appointment_service_redeem) {
+                $cashier = $com->appointment_service_redeem->cashier->first_name . ' ' . $com->appointment_service_redeem->cashier->last_name;
+            } else {
+                $cashier = 'N/A';
+            }
             $data[] = [
                 'commission_amount' => $com->commission_amount,
                 'client' => $com->client->first_name . ' ' . $com->client->last_name,
-                'package' => $com->appointment_package_redeem?->appointment_package?->package?->name,
+                'package' => $com->appointment_package_redeem?->appointment_package?->package?->name ?? 'N/A',
                 'combo' => $com->appointment_combo_redeem?->appointment_combo?->combo?->name ?? 'N/A',
                 'services' => $com->appointment_service_redeem?->appointment_service?->service?->name ?? 'N/A',
-                'cashier' => $com->appointment_package_redeem->cashier->first_name.' '.$com->appointment_package_redeem->cashier->last_name,
+                'cashier' => $cashier,
+                'gross_sale' => $com->gross_sale,
                 'created_at' => Carbon::parse($com->created_at)->format('F d, Y h:i A'),
             ];
         }
     
         return response()->json([
             'data' => $data,
-            'total_commission' => number_format($totcom, 2)
+            'total_commission' => number_format($totcom, 2),
+            'total_gross' => number_format($totgross, 2)
         ]);
     }    
 

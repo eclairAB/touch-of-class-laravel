@@ -30,12 +30,13 @@ class ProductsController extends Controller
             $package_redeem_id = $package_redeem->id;
             $comm = $pck->price /  $pck->sessions;
             $total_commission = $comm * ($pck->commission_percentage / 100);
-            $total_commission = number_format($total_commission, 2);
+            $total_commission = number_format($total_commission, 2, '.', '');
             $commision = New CommissionHistory();
             $commision->client_id = $client_id;
             $commision->package_redeem_id = $package_redeem_id;
             $commision->commission_amount = $total_commission;
             $commision->stylist_id = $parameter['stylist_id'];
+            $commision->gross_sale = number_format($comm, 2, '.', '');
             $commision->save();
             $package_redeem->update([
                 'branch_id' => $parameter['branch_id'],
@@ -49,20 +50,56 @@ class ProductsController extends Controller
         $combo_redeem = AppointmentComboRedeem::where('appointment_combo_id', $parameter['id'])
                     ->whereNull('branch_id')
                     ->first();
-
-        $combo_redeem->update([
-            'branch_id' => $parameter['branch_id'],
-            'cashier_id' => $this->user()->id,
-            'stylist_id' => $parameter['stylist_id'],
-        ]);
+        if($combo_redeem) {
+            $combo = $combo_redeem->appointment_combo->combo;
+            $client_id = $combo_redeem->appointment_combo->appointment->client->id;
+            $combo_redeem_id = $combo_redeem->id;
+            $combo_price = $combo->price;
+            $combo_div = $combo->combo_services->count();
+            $total_combo = $combo_price / $combo_div;
+            $overall_commission = 0;
+            $combo_service = $combo_redeem->service;
+            $gross_sale = $combo_redeem->service->price;
+            $commission_percentage = $combo_service->commission_percentage;
+            $total_commission = $total_combo * ($commission_percentage / 100);
+            $total_commission = number_format($total_commission, 2, '.', '');
+            $overall_commission += $total_commission; 
+            $commision = New CommissionHistory();
+            $commision->client_id = $client_id;
+            $commision->combo_redeem_id = $combo_redeem_id;
+            $commision->commission_amount = $overall_commission;
+            $commision->stylist_id = $parameter['stylist_id'];
+            $commision->gross_sale = number_format($gross_sale, 2, '.', '');
+            $commision->save();
+            $combo_redeem->update([
+                'branch_id' => $parameter['branch_id'],
+                'cashier_id' => $this->user()->id,
+                'stylist_id' => $parameter['stylist_id'],
+            ]);
+        }
     }
     function avail_service (Request $request) {
         $parameter = $request->toArray();
         $service_redeem = AppointmentServiceRedeem::where('appointment_service_id', $parameter['id'])->first();
-        $service_redeem->update([
-            'branch_id' => $parameter['branch_id'],
-            'cashier_id' => $this->user()->id,
-            'stylist_id' => $parameter['stylist_id'],
-        ]);
+        if($service_redeem) {
+            $serv = $service_redeem->appointment_service->service;
+            $client_id = $service_redeem->appointment_service->appointment->client->id;
+            $service_redeem_id = $service_redeem->id;
+            $comm = $serv->price;
+            $total_commission = $comm * ($serv->commission_percentage / 100);
+            $total_commission = number_format($total_commission, 2, '.', '');
+            $commision = New CommissionHistory();
+            $commision->client_id = $client_id;
+            $commision->service_redeem_id = $service_redeem_id;
+            $commision->commission_amount = $total_commission;
+            $commision->stylist_id = $parameter['stylist_id'];
+            $commision->gross_sale = number_format($comm, 2, '.', '');
+            $commision->save();
+            $service_redeem->update([
+                'branch_id' => $parameter['branch_id'],
+                'cashier_id' => $this->user()->id,
+                'stylist_id' => $parameter['stylist_id'],
+            ]);
+        }
     }
 }
