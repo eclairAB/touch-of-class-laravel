@@ -12,6 +12,7 @@ use App\Http\Controllers\PdfController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\UserController;
 
 
@@ -31,6 +32,7 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::apiResource('services', ServiceController::class);
     Route::apiResource('discounts', DiscountController::class);
     Route::apiResource('users', UserController::class);
+    Route::apiResource('employees', EmployeeController::class);
 
 
     Route::post('logout', [UserController::class, 'logout']);
@@ -39,6 +41,8 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::group(['prefix' => 'product'], function () {
         Route::post('upload_loyalty_cards', [AppointmentController::class, 'upload_loyalty_cards']);
         Route::get('fetch_loyalty_card/{client_id}', [AppointmentController::class, 'fetch_loyalty_card']);
+        Route::post('upload_free_services', [AppointmentController::class, 'upload_free_services']);
+        Route::get('fetch_free_services/{client_id}', [AppointmentController::class, 'fetch_free_service']);
 
         Route::group(['prefix' => 'avail'], function () {
             Route::post('combo', [ProductsController::class, 'avail_combo']);
@@ -52,9 +56,14 @@ Route::middleware('auth:sanctum')->group( function () {
     });
     Route::group(['prefix' => 'staffs'], function () {
         Route::post('search', [UserController::class, 'search_staff']);
+        Route::post('/stylist/commissions', [UserController::class, 'stylist_commissions']);
         Route::get('roles', function () {
             return \App\Models\Role::get();
         });
+    });
+    Route::group(['prefix' => 'employees'], function () {
+        Route::post('search', [EmployeeController::class, 'search_employee']);
+        Route::post('deduction', [EmployeeController::class, 'emp_deduction']);
     });
 });
 

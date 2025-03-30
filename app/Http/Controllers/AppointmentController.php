@@ -175,7 +175,7 @@ class AppointmentController extends Controller
                         $values = $this->payment_calc($product, $payload);
 
                         $payload['packages'][$product_key]['payment_share'] = $values->payment_share;
-                        $payload['packages'][$product_key]['balance'] = $values->balance;
+                        $payload['packages'][$product_key]['balance'] = $values->balance - $payload['disc_amount'];
                         $payload['packages'][$product_key]['redeems_paid'] = $values->redeems_paid;
                     }
                 }
@@ -184,7 +184,7 @@ class AppointmentController extends Controller
                         $values = $this->payment_calc($product, $payload);
 
                         $payload['combos'][$product_key]['payment_share'] = $values->payment_share;
-                        $payload['combos'][$product_key]['balance'] = $values->balance;
+                        $payload['combos'][$product_key]['balance'] = $values->balance - $payload['disc_amount'];
                         $payload['combos'][$product_key]['redeems_paid'] = $values->redeems_paid;
                     }
                 }
@@ -193,7 +193,7 @@ class AppointmentController extends Controller
                         $values = $this->payment_calc($product, $payload);
 
                         $payload['services'][$product_key]['payment_share'] = $values->payment_share;
-                        $payload['services'][$product_key]['balance'] = $values->balance;
+                        $payload['services'][$product_key]['balance'] = $values->balance - $payload['disc_amount'];
                         $payload['services'][$product_key]['redeems_paid'] = $values->redeems_paid;
                     }
                 }
@@ -242,6 +242,8 @@ class AppointmentController extends Controller
             $payload['reference_no']        = isset($payload['reference']) ? $payload['reference'] : null;
             $payload['biller_name']         = isset($payload['biller']) ? $payload['biller'] : null;
             $payload['payment_milestone']   = $payload['amount_paid'] >= $payload['amount_payable'] ? 'Full Payment' : 'Downpayment';
+            $payload['discount_id']         = $payload['discounts'];
+            $payload['discount_paid']         = $payload['disc_amount'];
 
             Payment::create($payload);
         }
@@ -254,6 +256,24 @@ class AppointmentController extends Controller
         foreach ($files as $file) {
             $fileName = time() . '_' . $file->getClientOriginalName();
             $filePath = Storage::disk('public')->put('uploads/client/loyalty/appointment/' . $request->appointment_id, $file, 'public'); // Save in 'storage/app/public/uploads'
+
+            $savedFiles[] = $filePath;
+        }
+
+        return response()->json([
+            'message' => 'Files uploaded successfully',
+            'files' => $savedFiles
+        ], 200);
+    }
+
+    public function upload_free_services (Request $request) {
+
+        $files = $request->file('images');
+        $savedFiles = [];
+
+        foreach ($files as $file) {
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = Storage::disk('public')->put('uploads/client/free/service/appointment/' . $request->appointment_id, $file, 'public'); // Save in 'storage/app/public/uploads'
 
             $savedFiles[] = $filePath;
         }
@@ -282,7 +302,32 @@ class AppointmentController extends Controller
         $imageDetails = [];
         foreach ($images as $image) {
             $imageDetails[] = [
-                'url' => env('APP_URL') . '/storage/' . $image,
+                'url' => config('app.url') . '/storage/' . $image,
+                'upload_date' => Carbon::createFromTimestamp(Storage::disk('public')->lastModified($image))->format('M j, Y'),
+            ];
+        }
+
+        return response()->json($imageDetails);
+    }
+    public function fetch_free_service($client_id) {
+        $appointment_ids = Appointment::where('client_id', $client_id)->pluck('id');
+
+        $files = [];
+        foreach ($appointment_ids as $id) {
+            $appointment_files = Storage::disk('public')->allFiles("uploads/client/free/service/appointment/$id/");
+            if (count($appointment_files) > 0) {
+                $files = array_merge($files, $appointment_files);
+            }
+        }
+
+        $images = array_filter($files, function($file) {
+            return preg_match('/\.(jpg|jpeg|png|gif)$/i', $file);
+        });
+
+        $imageDetails = [];
+        foreach ($images as $image) {
+            $imageDetails[] = [
+                'url' => config('app.url') . '/storage/' . $image,
                 'upload_date' => Carbon::createFromTimestamp(Storage::disk('public')->lastModified($image))->format('M j, Y'),
             ];
         }

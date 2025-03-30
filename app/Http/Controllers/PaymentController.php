@@ -23,7 +23,7 @@ class PaymentController extends Controller
                 'appointment_package.appointment.client',
                 'appointment_combo.appointment.client',
                 'appointment_service.appointment.client'
-            )->get();
+            )->orderBy('id','desc')->get();
         return response()->json($payments);
     }
 
@@ -38,9 +38,11 @@ class PaymentController extends Controller
 
     public function make_payment(Request $request) {
         $payment_payload = [
-            'amount' => $request->amount,
+            'amount_paid' => $request->amount,
             'payment_milestone' => 'Follow Up payment',
-            'payment_method' => $request->payment_method,
+            'payment_method' => $request->payment_type,
+            'reference_no' => $request->reference,
+            'biller_name' => $request->biller,
         ];
 
         if(isset($request->package_redeem_id)) {

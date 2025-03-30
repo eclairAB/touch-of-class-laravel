@@ -13,6 +13,7 @@ use App\Models\Client;
 use App\Models\Appointment;
 use App\Models\Payment;
 use App\Models\Branch;
+use App\Models\Discount;
 
 class FillDummy extends Command
 {
@@ -44,6 +45,7 @@ class FillDummy extends Command
         $this->create_combo();
         $this->create_package();
         $this->create_client();
+        $this->create_discount();
     }
 
     function clear_all() {
@@ -78,6 +80,11 @@ class FillDummy extends Command
             ],
             [
                 'name' => 'Nurse',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Employee',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -273,5 +280,24 @@ class FillDummy extends Command
             ],
         ];
         Client::insert($items);
+    }
+    function create_discount() {
+        $items = [
+            [
+                'discount_name' => 'PWD',
+                'percentage' => '1',
+                'amount' => '20.00',
+                'created_at' => now(),
+                'updated_at' > now(),
+            ],
+            [
+                'discount_name' => 'VIP',
+                'percentage' => '0',
+                'amount' => '500.00',
+                'created_at' => now(),
+                'updated_at' > now(),
+            ],
+        ];
+        Discount::insert($items);
     }
 }
