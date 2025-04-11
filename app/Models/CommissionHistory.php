@@ -19,6 +19,9 @@ class CommissionHistory extends Model
     function client() {
         return $this->belongsTo(Client::class);
     }
+    function stylist() {
+        return $this->belongsTo(User::class, 'stylist_id','id');
+    }
     function appointment_package_redeem() {
         return $this->belongsTo(AppointmentPackageRedeem::class, 'package_redeem_id','id');
     }

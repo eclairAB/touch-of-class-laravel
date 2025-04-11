@@ -5,16 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Branch extends Model
+class Expense extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'name',
-        'qouta_nurse',
-        'rent_expense',
+        'cashier_id',
+        'expense_name',
+        'amount',
     ];
-
-    function user() {
-        return $this->hasMany(User::class, 'assigned_branch_id', 'id');
+    function cashier() {
+        return $this->belongsTo(User::class, 'cashier_id','id');
     }
 }

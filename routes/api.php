@@ -14,6 +14,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ExpenseController;
 
 
 Route::post('login', [UserController::class, 'login']);
@@ -33,6 +34,7 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::apiResource('discounts', DiscountController::class);
     Route::apiResource('users', UserController::class);
     Route::apiResource('employees', EmployeeController::class);
+    Route::apiResource('expenses', ExpenseController::class);
 
 
     Route::post('logout', [UserController::class, 'logout']);
