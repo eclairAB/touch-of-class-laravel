@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('branches', function (Blueprint $table) {
-            $table->integer('qouta_nurse')->nullable();
-            $table->decimal('rent_expense', 8, 2)->nullable();
+        Schema::create('expenses', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('cashier_id')->nullable();
+            $table->string('expense_name');
+            $table->decimal('amount', 8, 2)->nullable();
+            $table->timestamps();
         });
     }
 
@@ -22,9 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('branches', function (Blueprint $table) {
-            $table->dropColumn('qouta_nurse');
-            $table->dropColumn('rent_expense');
-        });
+        Schema::dropIfExists('expenses');
     }
 };

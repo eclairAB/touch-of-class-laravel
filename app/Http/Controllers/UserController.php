@@ -125,8 +125,8 @@ class UserController extends Controller
 
         $users = User::where(function($query) use ($searchTerms) {
                 foreach ($searchTerms as $term) {
-                    $query->orWhere('first_name', 'ILIKE', "%{$term}%")
-                        ->orWhere('last_name', 'ILIKE', "%{$term}%");
+                    $query->orWhere('first_name', 'LIKE', "%{$term}%")
+                        ->orWhere('last_name', 'LIKE', "%{$term}%");
                 }
             })->where('active_employee', true);
         if(isset($request->role)) {

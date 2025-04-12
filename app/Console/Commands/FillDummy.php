@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Service;
@@ -154,23 +155,30 @@ class FillDummy extends Command
     function create_service() {
         $items = [
             [
-                'name'                  => 'Red Service',
+                'name'                  => 'Classic Manicure',
                 'commission_percentage' => 7,
-                'price'                 => 599,
+                'price'                 => 200,
                 'created_at'             => now(),
                 'updated_at'             => now(),
             ],
             [
-                'name'                  => 'Blue Service',
+                'name'                  => 'Classic Footspa',
                 'commission_percentage' => 8,
-                'price'                 => 2499,
+                'price'                 => 600,
                 'created_at'             => now(),
                 'updated_at'             => now(),
             ],
             [
-                'name'                  => 'Gold Service',
+                'name'                  => 'Korean Basic Facial',
                 'commission_percentage' => 9,
-                'price'                 => 3000,
+                'price'                 => 700,
+                'created_at'             => now(),
+                'updated_at'             => now(),
+            ],
+            [
+                'name'                  => 'Korean Glass Skin',
+                'commission_percentage' => 9,
+                'price'                 => 2400,
                 'created_at'             => now(),
                 'updated_at'             => now(),
             ],
@@ -218,26 +226,34 @@ class FillDummy extends Command
     function create_package() {
         $items = [
             [
-                'name'                  => 'Amethyst Package',
-                'sessions'              => 5,
+                'name'                  => 'Eyebags',
+                'sessions'              => 10,
                 'commission_percentage' => 8,
-                'price'                 => 9999,
+                'price'                 => 999,
                 'created_at'            => now(),
                 'updated_at'            => now(),
             ],
             [
-                'name'                  => 'Emerald Package',
-                'sessions'              => 3,
+                'name'                  => 'Double Chin',
+                'sessions'              => 10,
                 'commission_percentage' => 8,
-                'price'                 => 5999,
+                'price'                 => 999,
                 'created_at'            => now(),
                 'updated_at'            => now(),
             ],
             [
-                'name'                  => 'Sapphire Package',
-                'sessions'              => 8,
+                'name'                  => 'Cheeks',
+                'sessions'              => 10,
                 'commission_percentage' => 9,
-                'price'                 => 14599,
+                'price'                 => 999,
+                'created_at'            => now(),
+                'updated_at'            => now(),
+            ],
+            [
+                'name'                  => 'Arms',
+                'sessions'              => 10,
+                'commission_percentage' => 9,
+                'price'                 => 2999,
                 'created_at'            => now(),
                 'updated_at'            => now(),
             ],
@@ -285,14 +301,14 @@ class FillDummy extends Command
         $items = [
             [
                 'discount_name' => 'PWD',
-                'percentage' => '1',
+                'percentage' => true,
                 'amount' => '20.00',
                 'created_at' => now(),
                 'updated_at' > now(),
             ],
             [
                 'discount_name' => 'VIP',
-                'percentage' => '0',
+                'percentage' => false,
                 'amount' => '500.00',
                 'created_at' => now(),
                 'updated_at' > now(),
