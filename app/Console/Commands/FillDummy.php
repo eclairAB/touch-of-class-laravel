@@ -51,6 +51,8 @@ class FillDummy extends Command
 
     function clear_all() {
 
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
         Branch::truncate();
         Role::truncate();
         User::truncate();
@@ -60,6 +62,8 @@ class FillDummy extends Command
         Client::truncate();
         Appointment::truncate();
         Payment::truncate();
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 
     function create_roles() {
@@ -304,14 +308,14 @@ class FillDummy extends Command
                 'percentage' => true,
                 'amount' => '20.00',
                 'created_at' => now(),
-                'updated_at' > now(),
+                'updated_at' => now(),
             ],
             [
                 'discount_name' => 'VIP',
                 'percentage' => false,
                 'amount' => '500.00',
                 'created_at' => now(),
-                'updated_at' > now(),
+                'updated_at' => now(),
             ],
         ];
         Discount::insert($items);
